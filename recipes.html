@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore recipes with filters and search options.">
+    <title>Recipes - RecipEase</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>RecipEase</h1>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="webdesign.html">Home</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="recipes-page">
+        <div class="container">
+            <h2>Find Your Perfect Recipe</h2>
+            <!-- Filter and Search Section -->
+            <section id="filters">
+                <form id="recipe-filters">
+                    <input type="text" id="search-bar" placeholder="Search recipes..." name="search">
+                    <select name="diet" id="diet-filter">
+                        <option value="">All Diets</option>
+                        <option value="vegetarian">Vegetarian</option>
+                        <option value="vegan">Vegan</option>
+                        <option value="gluten-free">Gluten-Free</option>
+                        <option value="keto">Keto</option>
+                    </select>
+                    <select name="cuisine" id="cuisine-filter">
+                        <option value="">All Cuisines</option>
+                        <option value="italian">Italian</option>
+                        <option value="mexican">Mexican</option>
+                        <option value="indian">Indian</option>
+                        <option value="japanese">Japanese</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                </form>
+            </section>
+
+            <!-- Placeholder for Recipes -->
+            <section id="recipes-grid">
+                <p>Recipes will be displayed here in the future.</p>
+            </section>
+        </div>
+
+        <!-- Shopping Planner Section -->
+        <section id="shopping-planner">
+            <div class="container">
+                <h2>Shopping Planner</h2>
+
+                <!-- Map for Nearby Supermarkets -->
+                <div id="map" style="height: 400px; margin-bottom: 2rem;"></div>
+
+                <!-- Cheapest Basket Section -->
+                <section id="cheapest-basket">
+                    <h3>Cheapest Basket</h3>
+                    <p>Automatically calculates the cheapest shopping option for missing ingredients.</p>
+                    <ul id="shopping-list">
+                        <!-- Example of dynamically added items -->
+                    </ul>
+                    <p>Total: <span id="total-cost">$0.00</span></p>
+                    <button class="btn btn-primary" id="generate-list">Generate Shopping List</button>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 RecipEase. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Google Maps API -->
+    <script async
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBl-MbaTsjXPJrXL29a-LLIdq20hvTfiY0&callback=initMap">
+    </script>
+
+    <script>
+        function initMap() {
+            const options = {
+                zoom: 13,
+                center: { lat: 53.4808, lng: -2.2426 }, // Manchester coordinates
+            };
+
+            const map = new google.maps.Map(document.getElementById("map"), options);
+
+            const supermarkets = [
+                { name: "Store A", position: { lat: 53.4808, lng: -2.2426 }, price: 10 },
+                { name: "Store B", position: { lat: 53.4684, lng: -2.2305 }, price: 12 },
+            ];
+
+            supermarkets.forEach((store) => {
+                const marker = new google.maps.Marker({
+                    position: store.position,
+                    map: map,
+                    title: store.name,
+                });
+
+                const infoWindow = new google.maps.InfoWindow({
+                    content: `<b>${store.name}</b><br>Price: $${store.price}`,
+                });
+
+                marker.addListener("click", () => {
+                    infoWindow.open(map, marker);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
