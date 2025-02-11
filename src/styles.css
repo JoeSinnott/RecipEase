@@ -231,11 +231,11 @@ header .cta-buttons .btn:hover {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* Soft glowing effect */
 }
 
-/* Smooth Fade & Slide Animation */
-@keyframes fadeSlide {
+/* Smooth fade-in & fade-out effect */
+@keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(10px);
     }
     to {
         opacity: 1;
@@ -243,10 +243,30 @@ header .cta-buttons .btn:hover {
     }
 }
 
-/* Apply animation when recipes update */
-.recipe-card {
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(10px);
+    }
 }
+
+/* Apply animation to recipe cards */
+.recipe-card {
+    animation: fadeIn 0.5s ease-in-out;
+    transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+}
+
+/* Add class when filtering out results */
+.recipe-card.hidden {
+    animation: fadeOut 0.3s ease-in-out;
+    opacity: 0;
+    transform: translateY(10px);
+}
+
 
 
 /* Page Transition Effect */
