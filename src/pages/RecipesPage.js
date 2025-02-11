@@ -13,7 +13,10 @@ const RecipesPage = () => {
   const recipes = [
     { id: 1, image: "recipe1.jpg", title: "Spaghetti Bolognese", prepTime: "30 mins" },
     { id: 2, image: "recipe2.jpg", title: "Vegetarian Stir-Fry", prepTime: "20 mins" },
-  ];
+    { id: 3, image: "recipe3.jpg", title: "Grilled Chicken Salad", prepTime: "25 mins" },
+    { id: 4, image: "recipe4.jpg", title: "Chocolate Brownies", prepTime: "35 mins" },
+];
+
 
   // Filter recipes based on the search query
   const filteredRecipes = recipes.filter(recipe =>

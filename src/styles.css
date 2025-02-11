@@ -169,8 +169,14 @@ header .cta-buttons .btn:hover {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     text-align: center;
     padding: 1rem;
+    width: 280px; /* Ensures all cards have the same width */
+    height: 380px; /* Keeps all cards the same height */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Ensures spacing consistency */
 }
 
+/* Image settings (same as before) */
 .recipe-card img {
     width: 100%;
     border-radius: 8px;
@@ -178,15 +184,43 @@ header .cta-buttons .btn:hover {
     object-fit: cover;
 }
 
+/* Ensure text & buttons inside the card align properly */
 .recipe-card h4 {
     font-size: 1.2rem;
     margin: 0.5rem 0;
+    flex-grow: 1; /* Ensures text grows properly */
 }
 
 .recipe-card p {
     font-size: 0.9rem;
     color: #555;
 }
+
+.recipe-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: 0.3s ease-in-out;
+}
+
+/* Smooth Fade & Slide Animation */
+@keyframes fadeSlide {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Apply animation when recipes update */
+.recipe-card {
+    animation: fadeSlide 0.4s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+
+
 
 /* How It Works Section */
 #how-it-works {
@@ -293,11 +327,15 @@ footer ul li a:hover {
 
 /* Recipes Grid */
 #recipes-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Centers the cards */
     gap: 1.5rem;
     margin-top: 2rem;
 }
+
+
+
 
 #recipes-grid p {
     text-align: center;
