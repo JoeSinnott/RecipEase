@@ -515,5 +515,42 @@ html {
   }
    
 
+/* Search Bar Container */
+.search-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1.5rem auto;
+    width: 100%;
+    max-width: 450px;
+    border: 2px solid #ff7043;
+    border-radius: 25px;
+    overflow: hidden;
+    background: #fff;
+}
+
+/* Search Input */
+#recipe-search {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+}
+
+/* Search Button */
+.search-btn {
+    padding: 12px 15px;
+    background: #ff7043;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: 0.3s;
+}
+
+.search-btn:hover {
+    background: #e85a2e;
+}
 
 
