@@ -1,4 +1,5 @@
-import React from 'react';
+import React from "react";
+import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
@@ -7,7 +8,9 @@ const Hero = () => {
         <h2>Find Recipes with What’s in Your Fridge!</h2>
         <p>Discover delicious recipes based on the ingredients you already have and nearby supermarket options.</p>
         <div className="hero-cta">
-          <a href="#recipes" className="btn btn-primary">Find Recipes Now</a>
+          <Link to="/recipes" className="btn btn-primary">
+            Find Recipes Now
+          </Link>
           <a href="#download" className="btn btn-secondary">Download the App</a>
         </div>
       </div>
