@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import List
 import mysql.connector as sql
+import json
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -61,35 +62,39 @@ def suggest_recipes(request: RecipeRequest):
     cursor = conn.cursor(dictionary=True)
 
     try:
-        # ✅ Ensure all required fields are included
         format_strings = ','.join(['%s'] * len(request.ingredients))
         query = f"""
-            SELECT RecipeId, Name, RecipeInstructions, Ingredients, CookTime, PrepTime, TotalTime, RecipeCategory, Images, AggregatedRating, Calories
-            FROM recipes
-            WHERE RecipeId IN (
-                SELECT RecipeId FROM recipe_ingredients
-                WHERE IngredientId IN (
-                    SELECT IngredientId FROM ingredients WHERE Name IN ({format_strings})
-                )
-            )
-            GROUP BY RecipeId
-            ORDER BY COUNT(RecipeId) DESC
+            SELECT DISTINCT r.RecipeId, r.Name, r.RecipeInstructions, r.Ingredients, 
+                   r.CookTime, r.PrepTime, r.TotalTime, r.RecipeCategory, 
+                   r.Images, r.AggregatedRating, r.Calories
+            FROM recipes r
+            JOIN recipe_ingredients ri ON r.RecipeId = ri.RecipeId
+            JOIN ingredients i ON ri.IngredientId = i.IngredientId
+            WHERE i.Name IN ({format_strings})
+            GROUP BY r.RecipeId
+            ORDER BY COUNT(r.RecipeId) DESC
             LIMIT 10;
         """
         cursor.execute(query, tuple(request.ingredients))
         recipes = cursor.fetchall()
 
-        # ✅ Fix RecipeInstructions: Convert string to JSON list
+        # Process the recipes before returning
+        processed_recipes = []
         for recipe in recipes:
-            if isinstance(recipe["RecipeInstructions"], str):
-                recipe["RecipeInstructions"] = recipe["RecipeInstructions"].split(". ")  # Convert to list
+            if recipe["RecipeInstructions"]:
+                # Handle different formats of instructions
+                if isinstance(recipe["RecipeInstructions"], str):
+                    try:
+                        # Try to parse as JSON first
+                        recipe["RecipeInstructions"] = json.loads(recipe["RecipeInstructions"])
+                    except json.JSONDecodeError:
+                        # If not JSON, split by periods for steps
+                        recipe["RecipeInstructions"] = [step.strip() for step in recipe["RecipeInstructions"].split('.') if step.strip()]
+            else:
+                recipe["RecipeInstructions"] = ["No instructions available."]
+            processed_recipes.append(recipe)
 
-        conn.close()
-
-        if not recipes:
-            return {"message": "No matching recipes found", "suggested_recipes": []}
-
-        return {"suggested_recipes": recipes}
+        return {"suggested_recipes": processed_recipes}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching recipes: {str(e)}")

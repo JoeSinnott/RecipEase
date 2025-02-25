@@ -1,108 +1,67 @@
 import React, { useState, useEffect } from "react";
 import RecipeCard from "../components/RecipeCard";
+import '../styles/RecipesPage.css';
 
 const RecipesPage = () => {
-  const [search, setSearch] = useState("");
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [ingredients, setIngredients] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  // ✅ Fetch recipes when ingredients change
-  useEffect(() => {
-    if (ingredients.length === 0) {
-      setRecipes([]);  // ✅ Clear recipes when no ingredients
-      return;
-    }
-  
+  const searchRecipes = async (ingredients) => {
     setLoading(true);
-    setError(null);
-  
-    fetch("http://127.0.0.1:8000/recipes/suggest", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ingredients }),
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log("API Response:", data); 
-        setRecipes(data.suggested_recipes || []);  // ✅ Only update recipes if data exists
-        setLoading(false);
-      })
-      .catch(error => {
-        console.error("Error fetching recipes:", error);
-        setError("Failed to fetch recipes. Please try again.");
-        setLoading(false);
+    try {
+      const response = await fetch('http://localhost:8000/recipes/suggest', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ingredients: [ingredients] }),
       });
-  }, [ingredients]);  // ✅ Recipes update when ingredients change
-  
-  // ✅ Handle ingredient input
-  const handleInputChange = (e) => {
-    setSearch(e.target.value);
-  };
-
-  // ✅ Add ingredient on "Enter" key press
-  const handleAddIngredient = (e) => {
-    if ((e.key === "Enter" || e.type === "click") && search.trim() !== "") {
-      if (!ingredients.includes(search.trim())) {  // ✅ Prevent duplicates
-        setIngredients([...ingredients, search.trim()]);
+      
+      const data = await response.json();
+      console.log('API Response:', data); // Debug log
+      if (data && data.suggested_recipes) {
+        setRecipes(data.suggested_recipes);
       }
-      setSearch(""); // ✅ Clear input field
+    } catch (error) {
+      console.error('Error fetching recipes:', error);
+    } finally {
+      setLoading(false);
     }
   };
-  
 
-  // ✅ Remove ingredient from the list
-  const handleRemoveIngredient = (ingredient) => {
-    setIngredients((prevIngredients) => prevIngredients.filter((item) => item !== ingredient));
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      searchRecipes(searchTerm);
+    }
   };
 
   return (
-    <main id="recipes-page">
-      <div className="container">
-        <h2>Find Your Perfect Recipe</h2>
+    <div className="recipes-section">
+      <div className="search-container">
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search recipes by ingredient..."
+          className="search-input"
+        />
+        <button onClick={handleSearch} className="add-button">
+          Add
+        </button>
+      </div>
 
-        {/* ✅ Ingredient Input */}
-        <div className="ingredient-input">
-          <input
-            type="text"
-            placeholder="Enter an ingredient..."
-            value={search}
-            onChange={handleInputChange}
-            onKeyDown={handleAddIngredient}  // ✅ Press Enter to add
-          />
-          <button onClick={() => handleAddIngredient({ key: "Enter" })}>Add</button>  {/* ✅ Click button to add */}
-        </div>
-
-
-
-
-        {/* ✅ Display added ingredients */}
-        <div className="ingredient-list">
-          {ingredients.map((ingredient, index) => (
-            <span key={index} className="ingredient">
-              {ingredient}{" "}
-              <button onClick={() => handleRemoveIngredient(ingredient)}>×</button>
-            </span>
-          ))}
-        </div>
-
-        {/* ✅ Loading & Error Handling */}
+      <div className="recipes-grid">
         {loading ? (
-          <p>Loading recipes...</p>
-        ) : error ? (
-          <p className="error">{error}</p>
+          <div className="loading">Loading...</div>
         ) : (
-          <section id="recipes-grid">
-            {recipes.length > 0 ? (
-              recipes.map((recipe) => <RecipeCard key={recipe.RecipeId} {...recipe} />)  // ✅ Unique key added
-            ) : (
-              <p>No recipes found. Try different ingredients!</p>
-            )}
-          </section>
+          recipes.map((recipe) => (
+            <RecipeCard key={recipe.RecipeId} recipe={recipe} />
+          ))
         )}
       </div>
-    </main>
+    </div>
   );
 };
 

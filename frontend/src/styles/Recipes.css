@@ -1,0 +1,119 @@
+.recipes-section {
+  padding: 2rem 0;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.recipes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.recipe-card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.recipe-card:hover {
+  transform: translateY(-5px);
+}
+
+.search-container {
+  margin: 2rem auto;
+  max-width: 600px;
+  padding: 0 1rem;
+  background-color: #ff9800;
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.search-input {
+  flex: 1;
+  padding: 1rem;
+  font-size: 1.1rem;
+  border: none;
+  background: transparent;
+  color: black;
+  margin-left: 1rem;
+  width: 100%;
+}
+
+.search-input::placeholder {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.search-input:focus {
+  outline: none;
+}
+
+.add-button {
+  background: white;
+  color: #ff9800;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 20px;
+  margin-right: 1rem;
+  margin-left: 1rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.add-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.no-recipes {
+  text-align: center;
+  padding: 2rem;
+  grid-column: 1 / -1;
+  color: #666;
+  font-size: 1.2rem;
+}
+
+@media (max-width: 768px) {
+  .search-container {
+    margin: 1rem;
+  }
+
+  .search-input {
+    padding: 0.8rem;
+    font-size: 1rem;
+  }
+
+  .recipes-grid {
+    padding: 1rem;
+    gap: 1rem;
+  }
+}
+
+/* Ensure these styles only apply to the recipes page */
+.recipes-section .search-input {
+  pointer-events: auto !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+} 

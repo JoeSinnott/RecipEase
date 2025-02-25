@@ -7,6 +7,8 @@ import RecipesPage from "./pages/RecipesPage";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import ForgotPassword from "./pages/ForgotPassword";
+import FavoritesPage from './pages/FavoritesPage';
+import RecipeDetailPage from './pages/RecipeDetailPage';
 import "./styles.css";
 
 const PageTransitionWrapper = ({ children }) => {
@@ -29,9 +31,11 @@ const App = () => {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/recipes" element={<RecipesPage />} />
+          <Route path="/favorites" element={<FavoritesPage />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/recipe/:id" element={<RecipeDetailPage />} />
         </Routes>
       </PageTransitionWrapper>
       <Footer />
