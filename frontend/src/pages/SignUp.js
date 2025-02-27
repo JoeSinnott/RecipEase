@@ -8,7 +8,7 @@ const SignUp = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError(""); // Reset errors
 
@@ -22,8 +22,36 @@ const SignUp = () => {
       return;
     }
 
-    alert("Account Created Successfully!");
-    navigate("/signin"); // Redirect to sign-in page
+    const validatePassword = (password) => {
+      const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+      return regex.test(password);
+    };
+
+    if (!validatePassword(password)) {
+      setError("Password must be at least 8 characters and contain both letters and numbers.");
+      return;
+    }
+
+    // Send data to PHP backend (signup.php)
+    try {
+      const response = await fetch("http://localhost:3000/cm5-recipease/backend/signup.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const result = await response.json();
+      if (result.error) {
+        setError(result.error);
+      } else {
+        alert(result.message);
+        navigate("/signin"); // Redirect to sign-in page
+      }
+    } catch (error) {
+      setError("An error occurred while signing up.");
+    }
   };
 
   return (

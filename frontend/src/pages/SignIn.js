@@ -7,7 +7,7 @@ const SignIn = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError(""); // Reset errors
 
@@ -16,12 +16,29 @@ const SignIn = () => {
       return;
     }
 
-    // Simulating authentication
-    if (email === "test@example.com" && password === "password123") {
-      alert("Login Successful!");
-      navigate("/"); // Redirect to homepage
-    } else {
-      setError("Invalid email or password.");
+    try {
+      // Send a POST request to your PHP backend
+      const response = await fetch("http://localhost:3000/cm5-recipease/backend/login.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Login successful
+        alert("Login Successful!");
+        navigate("/"); // Redirect to homepage
+      } else {
+        // Login failed
+        setError(data.message || "Invalid email or password.");
+      }
+    } catch (err) {
+      console.error("Error during login:", err);
+      setError("An error occurred. Please try again.");
     }
   };
 
@@ -47,7 +64,7 @@ const SignIn = () => {
         <button type="submit" className="btn">Sign In</button>
       </form>
       <p>Forgot your password? <Link to="/forgot-password">Click here</Link></p>
-      <p>Don't have an account? <Link to="/signup">Sign Up</Link></p>
+      <p>Dont have an account? <Link to="/signup">Sign Up</Link></p>
     </div>
   );
 };
