@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import RecipeCard from "../components/RecipeCard";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
+import RecipeCard from "../components/RecipeCard";
 import "leaflet/dist/leaflet.css";
 import '../styles/RecipesPage.css';
 
+// Supermarket logos
 const logoUrls = {
   "Tesco": "https://upload.wikimedia.org/wikipedia/en/b/b0/Tesco_Logo.svg",
   "Sainsbury's": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Sainsbury%27s_logo.png",
@@ -21,41 +22,43 @@ const logoUrls = {
 };
 
 const RecipesPage = () => {
+  const [search, setSearch] = useState("");
+  const [ingredients, setIngredients] = useState([]);
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [error, setError] = useState(null);
   const [supermarkets, setSupermarkets] = useState([]);
 
-  const searchRecipes = async (ingredients) => {
+  const manchesterCenter = [53.483959, -2.244644];
+
+  // ✅ Fetch recipes when ingredients change
+  useEffect(() => {
+    if (ingredients.length === 0) {
+      setRecipes([]);
+      return;
+    }
+
     setLoading(true);
-    try {
-      const response = await fetch('http://localhost:8000/recipes/suggest', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ingredients: [ingredients] }),
-      });
-      
-      const data = await response.json();
-      console.log('API Response:', data);
-      if (data && data.suggested_recipes) {
-        setRecipes(data.suggested_recipes);
-      }
-    } catch (error) {
-      console.error('Error fetching recipes:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    setError(null);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchTerm.trim()) {
-      searchRecipes(searchTerm);
-    }
-  };
+    fetch("http://127.0.0.1:8000/recipes/suggest", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ingredients }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log("API Response:", data);
+        setRecipes(data.suggested_recipes || []);
+      })
+      .catch(error => {
+        console.error("Error fetching recipes:", error);
+        setError("Failed to fetch recipes. Please try again.");
+      })
+      .finally(() => setLoading(false));
+  }, [ingredients]);
 
+  // ✅ Fetch supermarkets
   useEffect(() => {
     const fetchSupermarkets = async () => {
       const query = `
@@ -74,30 +77,18 @@ const RecipesPage = () => {
         console.log("Fetched Supermarkets Data:", data.elements);
         const places = data.elements.map((element) => {
           let name = element.tags.brand || element.tags.name || "Unknown Supermarket";
-          
-          if (name.includes("Tesco")) name = "Tesco";
-          if (name.includes("Sainsbury")) name = "Sainsbury's";
-          if (name.includes("Aldi")) name = "Aldi";
-          if (name.includes("Lidl")) name = "Lidl";
-          if (name.includes("Asda")) name = "Asda";
-          if (name.includes("Morrisons")) name = "Morrisons";
-          if (name.includes("Co-op")) name = "Co-op Food";
-          if (name.includes("Marks & Spencer") || name.includes("M&S")) name = "Marks & Spencer";
-          if (name.includes("Waitrose")) name = "Waitrose";
-          if (name.includes("Iceland")) name = "Iceland";
-          if (name.includes("Farmfoods")) name = "Farmfoods";
-          if (name.includes("Spar")) name = "SPAR";
+
+          // Normalize supermarket names
+          Object.keys(logoUrls).forEach(brand => {
+            if (name.includes(brand)) name = brand;
+          });
 
           if (logoUrls[name]) {
-            return {
-              id: element.id,
-              name: name,
-              lat: element.lat,
-              lon: element.lon,
-            };
+            return { id: element.id, name, lat: element.lat, lon: element.lon };
           }
           return null;
         }).filter(Boolean);
+
         setSupermarkets(places);
       } catch (error) {
         console.error("Error fetching supermarkets:", error);
@@ -107,37 +98,95 @@ const RecipesPage = () => {
     fetchSupermarkets();
   }, []);
 
-  const manchesterCenter = [53.483959, -2.244644];
+  // ✅ Handle ingredient input
+  const handleInputChange = (e) => {
+    setSearch(e.target.value);
+  };
+
+  // ✅ Add ingredient on Enter key press
+  const handleAddIngredient = (e) => {
+    if ((e.key === "Enter" || e.type === "click") && search.trim() !== "") {
+      if (!ingredients.includes(search.trim())) {
+        setIngredients([...ingredients, search.trim()]);
+      }
+      setSearch(""); // Clear input field
+    }
+  };
+
+  // ✅ Remove ingredient from list
+  const handleRemoveIngredient = (ingredient) => {
+    setIngredients(ingredients.filter((item) => item !== ingredient));
+  };
 
   return (
-    <div className="recipes-section">
-      <div className="search-container">
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search recipes by ingredient..."
-          className="search-input"
-        />
-        <button onClick={handleSearch} className="add-button">Search</button>
+    <main id="recipes-page">
+      <div className="container">
+        <h2>Find Your Perfect Recipe</h2>
+
+        {/* ✅ Ingredient Input */}
+        <div className="ingredient-input">
+          <input
+            type="text"
+            placeholder="Enter an ingredient..."
+            value={search}
+            onChange={handleInputChange}
+            onKeyDown={handleAddIngredient}
+          />
+          <button onClick={() => handleAddIngredient({ key: "Enter" })}>Add</button>
+        </div>
+
+        {/* ✅ Display added ingredients */}
+        <div className="ingredient-list">
+          {ingredients.map((ingredient, index) => (
+            <span key={index} className="ingredient">
+              {ingredient}{" "}
+              <button onClick={() => handleRemoveIngredient(ingredient)}>×</button>
+            </span>
+          ))}
+        </div>
+
+        {/* ✅ Loading & Error Handling */}
+        {loading ? (
+          <p>Loading recipes...</p>
+        ) : error ? (
+          <p className="error">{error}</p>
+        ) : (
+          <section id="recipes-grid">
+            {recipes.length > 0 ? (
+              recipes.map((recipe) => (
+                <RecipeCard key={recipe.id || Math.random()} recipe={recipe} />
+
+              ))
+            ) : (
+              <p>No recipes found. Try different ingredients!</p>
+            )}
+          </section>
+        )}
+
+        {/* ✅ Supermarket Map */}
+        <section id="supermarket-map">
+          <h2>Find Nearby Supermarkets</h2>
+          <MapContainer center={manchesterCenter} zoom={12} style={{ height: "400px", width: "80%", margin: "auto" }}>
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; OpenStreetMap contributors' />
+            {supermarkets.map((place) => {
+              const logoUrl = logoUrls[place.name];
+              const customIcon = new L.Icon({
+                iconUrl: logoUrl,
+                iconSize: [25, 25],
+                iconAnchor: [12, 25],
+                popupAnchor: [0, -25],
+              });
+
+              return (
+                <Marker key={place.id} position={[place.lat, place.lon]} icon={customIcon}>
+                  <Popup>{place.name}</Popup>
+                </Marker>
+              );
+            })}
+          </MapContainer>
+        </section>
       </div>
-      <section id="supermarket-map">
-        <h2>Find Nearby Supermarkets</h2>
-        <MapContainer center={manchesterCenter} zoom={12} style={{ height: "400px", width: "80%", margin: "auto" }}>
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' />
-          {supermarkets.map((place) => {
-            const logoUrl = logoUrls[place.name];
-            const customIcon = new L.Icon({
-              iconUrl: logoUrl,
-              iconSize: place.name === "Asda" ? [20, 10] : [25, 25],
-              iconAnchor: [12, 25], 
-              popupAnchor: [0, -25],
-            });
-            return <Marker key={place.id} position={[place.lat, place.lon]} icon={customIcon}><Popup>{place.name}</Popup></Marker>;
-          })}
-        </MapContainer>
-      </section>
-    </div>
+    </main>
   );
 };
 
