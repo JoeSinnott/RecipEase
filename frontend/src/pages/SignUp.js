@@ -34,12 +34,15 @@ const SignUp = () => {
 
     // Send data to PHP backend (signup.php)
     try {
-      const response = await fetch("http://localhost:3000/cm5-recipease/backend/signup.php", {
+      const response = await fetch("http://127.0.0.1:8000/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
       });
 
       const result = await response.json();
