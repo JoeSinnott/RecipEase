@@ -11,8 +11,8 @@ const Features = () => {
             <p>Find recipes based on what’s already in your fridge.</p>
           </div>
           <div className="card">
-            <h4>Supermarket Integration</h4>
-            <p>Get missing ingredients from nearby stores.</p>
+            <h4>Supermarket Watch</h4>
+            <p>Find local stores in your area.</p>
           </div>
           <div className="card">
             <h4>Save Your Favorites</h4>

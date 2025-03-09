@@ -8,16 +8,16 @@ const FavoritesPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get favorites from localStorage and update state
+    // ✅ Load favorites from localStorage
     const loadFavorites = () => {
-      const favoritedRecipes = getFavorites();
+      const favoritedRecipes = getFavorites() || []; // ✅ Prevents null issues
       setFavorites(favoritedRecipes);
       setLoading(false);
     };
 
     loadFavorites();
 
-    // Add event listener for storage changes
+    // ✅ Listen for changes in localStorage
     window.addEventListener('storage', loadFavorites);
 
     return () => {
@@ -41,10 +41,10 @@ const FavoritesPage = () => {
       <div className="container">
         <h2>My Favorite Recipes</h2>
         <div className="recipes-grid">
-          {favorites && favorites.length > 0 ? (
+          {favorites.length > 0 ? (
             favorites.map((recipe) => (
               <RecipeCard 
-                key={recipe.RecipeId} 
+                key={recipe.id}  // ✅ Fixed: Changed from RecipeId to id
                 recipe={recipe}
               />
             ))

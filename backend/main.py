@@ -37,6 +37,7 @@ def get_db_connection():
             password="G53uPmjfOvBqLXrunGlcjdFRbSSxT9HtWk3P3oAEkTs",
             database="2024_comp10120_cm5"
         )
+        print("✅ Database connection successful!")
         return conn
     except sql.Error as e:
         print(f"❌ Database connection failed: {str(e)}")
@@ -55,6 +56,8 @@ def read_root():
 @app.post("/recipes/suggest")
 def suggest_recipes(request: RecipeRequest):
     """Fetches recipes that contain the provided ingredients."""
+    print(f"🔍 Received ingredients: {request.ingredients}")  # Debugging
+
     conn = get_db_connection()
     if not conn:
         raise HTTPException(status_code=500, detail="Database connection failed.")
@@ -62,6 +65,9 @@ def suggest_recipes(request: RecipeRequest):
     cursor = conn.cursor(dictionary=True)
 
     try:
+        if not request.ingredients:
+            raise HTTPException(status_code=400, detail="No ingredients provided.")
+
         format_strings = ','.join(['%s'] * len(request.ingredients))
         query = f"""
             SELECT DISTINCT r.RecipeId, r.Name, r.RecipeInstructions, r.Ingredients, 
@@ -78,23 +84,54 @@ def suggest_recipes(request: RecipeRequest):
         cursor.execute(query, tuple(request.ingredients))
         recipes = cursor.fetchall()
 
+        if not recipes:
+            print("⚠️ No recipes found for the given ingredients.")
+            return {"suggested_recipes": []}
+
+        # ✅ Debugging: Print raw database response
+        print("✅ Raw database response:", recipes)
+
         # Process the recipes before returning
         processed_recipes = []
         for recipe in recipes:
-            if recipe["RecipeInstructions"]:
-                # Handle different formats of instructions
-                if isinstance(recipe["RecipeInstructions"], str):
-                    try:
-                        # Try to parse as JSON first
+            # ✅ Convert field names to match frontend expectations
+            processed_recipe = {
+                "id": recipe.pop("RecipeId", None),
+                "name": recipe.pop("Name", "Unnamed Recipe"),
+                "category": recipe.pop("RecipeCategory", "N/A"),
+                "prep_time": recipe.pop("PrepTime", "N/A"),
+                "cook_time": recipe.pop("CookTime", "N/A"),
+                "total_time": recipe.pop("TotalTime", "N/A"),
+                "rating": recipe.pop("AggregatedRating", "N/A"),
+                "calories": recipe.pop("Calories", "N/A"),
+                "images": recipe.pop("Images", "/placeholder.jpg"),
+                "ingredients": recipe.pop("Ingredients", "No ingredients listed"),
+            }
+
+            # ✅ Handle recipe instructions (ensure it's an array)
+            if recipe.get("RecipeInstructions"):
+                try:
+                    if isinstance(recipe["RecipeInstructions"], str):
                         recipe["RecipeInstructions"] = json.loads(recipe["RecipeInstructions"])
-                    except json.JSONDecodeError:
-                        # If not JSON, split by periods for steps
-                        recipe["RecipeInstructions"] = [step.strip() for step in recipe["RecipeInstructions"].split('.') if step.strip()]
+                except json.JSONDecodeError:
+                    recipe["RecipeInstructions"] = [step.strip() for step in recipe["RecipeInstructions"].split('.') if step.strip()]
             else:
                 recipe["RecipeInstructions"] = ["No instructions available."]
-            processed_recipes.append(recipe)
+            
+            processed_recipe["instructions"] = recipe["RecipeInstructions"]
+
+            processed_recipes.append(processed_recipe)
+
+        # ✅ Debugging: Print processed response
+        print("✅ Processed API response:", processed_recipes)
 
         return {"suggested_recipes": processed_recipes}
 
     except Exception as e:
+        print(f"❌ Error fetching recipes: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error fetching recipes: {str(e)}")
+
+    finally:
+        cursor.close()
+        conn.close()
+        print("🔻 Database connection closed.")

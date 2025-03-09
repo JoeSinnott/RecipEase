@@ -5,30 +5,30 @@ import '../styles/RecipeModal.css';
 const RecipeModal = ({ recipe, onClose, onFavoriteToggle = null }) => {
   const [isFavorited, setIsFavorited] = useState(false);
   
-  // Check favorite status when component mounts
+  // ✅ Fix: Use `id` instead of `RecipeId`
   useEffect(() => {
-    setIsFavorited(isFavorite(recipe.RecipeId));
-  }, [recipe.RecipeId]);
+    if (recipe && recipe.id) {
+      setIsFavorited(isFavorite(recipe.id));
+    }
+  }, [recipe?.id]);
 
   const handleFavoriteToggle = (e) => {
-    e.stopPropagation(); // Prevent modal close
-    
+    e.stopPropagation();
+
     if (isFavorited) {
-      removeFavorite(recipe.RecipeId);
+      removeFavorite(recipe.id); // ✅ Fixed
     } else {
       addFavorite(recipe);
     }
-    
+
     setIsFavorited(!isFavorited);
-    
-    // Call the parent component's callback if provided
-    // This allows the favorites page to update its UI when a recipe is unfavorited
+
     if (onFavoriteToggle) {
-      onFavoriteToggle(recipe.RecipeId, !isFavorited);
+      onFavoriteToggle(recipe.id, !isFavorited); // ✅ Fixed
     }
   };
 
-  // Parse ingredients from JSON string if needed
+  // ✅ Ensures ingredients are properly parsed
   const parseIngredients = (ingredients) => {
     if (!ingredients) return [];
     try {
@@ -38,8 +38,8 @@ const RecipeModal = ({ recipe, onClose, onFavoriteToggle = null }) => {
     }
   };
 
-  const ingredients = parseIngredients(recipe.Ingredients);
-  const instructions = recipe.RecipeInstructions || ["No instructions available."];
+  const ingredients = parseIngredients(recipe.ingredients); // ✅ Fixed field name
+  const instructions = recipe.instructions || ["No instructions available."]; // ✅ Fixed field name
 
   // Prevent clicks within the modal from closing it
   const handleModalClick = (e) => {
@@ -61,15 +61,15 @@ const RecipeModal = ({ recipe, onClose, onFavoriteToggle = null }) => {
         
         <div className="modal-content">
           <div className="modal-header">
-            <h2>{recipe.Name}</h2>
-            <p className="recipe-category">{recipe.RecipeCategory || "Uncategorized"}</p>
+            <h2>{recipe.name || "Unnamed Recipe"}</h2> {/* ✅ Fixed field name */}
+            <p className="recipe-category">{recipe.category || "Uncategorized"}</p> {/* ✅ Fixed field name */}
           </div>
           
           <div className="modal-body">
             <div className="modal-image-container">
               <img 
-                src={recipe.Images || "/placeholder.jpg"} 
-                alt={recipe.Name} 
+                src={recipe.images || "/placeholder.jpg"}  // ✅ Fixed field name
+                alt={recipe.name || "Recipe Image"} 
                 className="modal-image"
               />
             </div>
@@ -77,13 +77,7 @@ const RecipeModal = ({ recipe, onClose, onFavoriteToggle = null }) => {
             <div className="modal-info">
               <div className="recipe-timing">
                 <div className="timing-item">
-                  <strong>Prep:</strong> {recipe.PrepTime ? `${Math.floor(recipe.PrepTime / 60)} mins` : "N/A"}
-                </div>
-                <div className="timing-item">
-                  <strong>Cook:</strong> {recipe.CookTime ? `${Math.floor(recipe.CookTime / 60)} mins` : "N/A"}
-                </div>
-                <div className="timing-item">
-                  <strong>Total:</strong> {recipe.TotalTime ? `${Math.floor(recipe.TotalTime / 60)} mins` : "N/A"}
+                  <strong>Prep:</strong> {recipe.minutes ? `${recipe.minutes} mins` : "N/A"} {/* ✅ Fixed field name */}
                 </div>
               </div>
               
@@ -114,4 +108,4 @@ const RecipeModal = ({ recipe, onClose, onFavoriteToggle = null }) => {
   );
 };
 
-export default RecipeModal; 
+export default RecipeModal;
