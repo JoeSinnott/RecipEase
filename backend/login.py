@@ -1,16 +1,21 @@
-rom fastapi import FastAPI, HTTPException, Depends
+import os
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 import mysql.connector as sql
-import bcrypt
+from argon2 import PasswordHasher
 
-app = FastAPI()
+# Create a FastAPI router
+router = APIRouter()
+
+# Password hasher
+ph = PasswordHasher()
 
 # Request model for login
 class LoginRequest(BaseModel):
     email: str
     password: str
 
-# Connect to database (replace with MySQL if needed)
+# Function to connect to the database
 def get_db_connection():
     """Establish and return a MySQL database connection."""
     try:
@@ -25,22 +30,33 @@ def get_db_connection():
         print(f"Database connection failed: {str(e)}")
         return None
 
-@app.post("/login")
+# Login route
+@router.post("/login")
 async def login(user: LoginRequest):
     conn = get_db_connection()
-    cursor = conn.cursor()
-
-    # Fetch user by email
-    cursor.execute("SELECT * FROM users WHERE Email = ?", (user.email,))
+    if not conn:
+        raise HTTPException(status_code=500, detail="Database connection failed.")
+    
+    cursor = conn.cursor(dictionary=True)  # Use dictionary=True to get column names
+    
+    # Fetch user by email (Use `%s` for MySQL placeholders)
+    cursor.execute("SELECT * FROM users WHERE Email = %s", (user.email,))
     db_user = cursor.fetchone()
 
     if not db_user:
+        cursor.close()
+        conn.close()
         raise HTTPException(status_code=400, detail="Invalid email or password.")
 
     # Check password
     stored_password = db_user["PasswordHash"]  # Stored hashed password
-    if not bcrypt.checkpw(user.password.encode(), stored_password.encode()):
+    try:
+        if not ph.verify(stored_password, user.password):
+            raise HTTPException(status_code=400, detail="Invalid email or password.")
+    except:
         raise HTTPException(status_code=400, detail="Invalid email or password.")
 
-    # If login successful
+    cursor.close()
+    conn.close()
+
     return {"message": "Login successful!"}

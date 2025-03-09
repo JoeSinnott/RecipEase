@@ -3,8 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import List
+from signup import router as signup_router
+from login import router as login_router
 import mysql.connector as sql
 import json
+
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -17,6 +20,12 @@ app.add_middleware(
     allow_methods=["*"],  # ✅ Allow all HTTP methods
     allow_headers=["*"],  # ✅ Allow all headers
 )
+
+# Incluude the signup/login routes
+app.include_router(signup_router)
+app.include_router(login_router)
+
+
 
 # ✅ Manually Handle OPTIONS Request for CORS Preflight
 @app.options("/recipes/suggest")
