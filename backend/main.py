@@ -8,18 +8,27 @@ from login import router as login_router
 from createrecipe import router as createrecipe_router
 import mysql.connector as sql
 import json
+import os
+from dotenv import load_dotenv
 
+# Load environment variables
+load_dotenv()
 
 # Initialize FastAPI app
 app = FastAPI()
 
-# ✅ CORS Middleware (Allow React frontend to access FastAPI)
+# CORS Middleware configuration
+origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # ✅ Allow frontend access
+    allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],  # ✅ Allow all HTTP methods
-    allow_headers=["*"],  # ✅ Allow all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Include the signup/login routes
