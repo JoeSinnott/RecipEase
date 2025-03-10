@@ -21,18 +21,24 @@ def recommend_recipes(ingredients):
     if not ingredients:
         return {"message": "No ingredients provided."}
     
-    format_strings = ','.join(['%s'] * len(ingredients))
+    # Create a LIKE condition for each ingredient (e.g., '%ingredient%')
+    like_conditions = [f"i.Name LIKE %s" for _ in ingredients]
+    format_strings = ' OR '.join(like_conditions)  # Join the conditions with 'OR'
+    
     query = f"""
         SELECT r.RecipeId, r.Name, r.RecipeInstructions, r.Ingredients, r.CookTime, r.PrepTime, r.TotalTime, r.RecipeCategory, r.Images, r.AggregatedRating, r.Calories, COUNT(ri.IngredientId) AS match_count
         FROM recipes r
         JOIN recipe_ingredients ri ON r.RecipeId = ri.RecipeId
         JOIN ingredients i ON ri.IngredientId = i.IngredientId
-        WHERE i.Name IN ({format_strings})
+        WHERE {format_strings}
         GROUP BY r.RecipeId
         ORDER BY match_count DESC;
     """
     
-    cursor.execute(query, tuple(ingredients))
+    # Add '%' around each ingredient to match partial strings in the LIKE condition
+    ingredients_like = [f"%{ingredient}%" for ingredient in ingredients]
+    
+    cursor.execute(query, tuple(ingredients_like))
     recipes = cursor.fetchall()
     cursor.close()
     conn.close()

@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from typing import List
 from signup import router as signup_router
 from login import router as login_router
+from createrecipe import router as createrecipe_router
 import mysql.connector as sql
 import json
 
@@ -21,11 +22,12 @@ app.add_middleware(
     allow_headers=["*"],  # ✅ Allow all headers
 )
 
-# Incluude the signup/login routes
+# Include the signup/login routes
 app.include_router(signup_router)
 app.include_router(login_router)
 
-
+# Include the createrecipe route
+app.include_router(createrecipe_router)
 
 # ✅ Manually Handle OPTIONS Request for CORS Preflight
 @app.options("/recipes/suggest")
@@ -41,10 +43,10 @@ def get_db_connection():
     """Connects to MySQL database and returns the connection."""
     try:
         conn = sql.connect(
-            host="dbhost.cs.man.ac.uk",  # Use "localhost" if testing locally
-            user="y46354js",
-            password="G53uPmjfOvBqLXrunGlcjdFRbSSxT9HtWk3P3oAEkTs",
-            database="2024_comp10120_cm5"
+            host=os.getenv("DB_HOST"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            database=os.getenv("DB_NAME")
         )
         print("✅ Database connection successful!")
         return conn
