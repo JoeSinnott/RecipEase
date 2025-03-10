@@ -49,20 +49,21 @@ async def options_handler():
 
 # ✅ Database connection function
 def get_db_connection():
-    """Connects to MySQL database and returns the connection."""
+    """Establish and return a MySQL database connection."""
     try:
         conn = sql.connect(
-            host=os.getenv("DB_HOST"),
-            user=os.getenv("DB_USER"),
-            password=os.getenv("DB_PASSWORD"),
-            database=os.getenv("DB_NAME")
+            host=os.getenv("DB_HOST", "dbhost.cs.man.ac.uk"),  # ✅ University database host
+            user=os.getenv("DB_USER", "y46354js"),
+            password=os.getenv("DB_PASSWORD", "G53uPmjfOvBqLXrunGlcjdFRbSSxT9HtWk3P3oAEkTs"),
+            database=os.getenv("DB_NAME", "2024_comp10120_cm5"),
+            port=int(os.getenv("DB_PORT", 3306))  # ✅ Ensure correct port
         )
-        print("✅ Database connection successful!")
+
+        print("✅ Connected to University Database!")
         return conn
     except sql.Error as e:
         print(f"❌ Database connection failed: {str(e)}")
         return None
-
 # ✅ Request model for recipe suggestions
 class RecipeRequest(BaseModel):
     ingredients: List[str]
