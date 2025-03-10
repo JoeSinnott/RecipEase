@@ -1,0 +1,110 @@
+.recipe-card {
+    width: 300px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 15px;
+    background: #fff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+/* Hover Effect */
+.recipe-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Recipe Image */
+.recipe-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+/* Recipe Title */
+.recipe-card h3 {
+    font-size: 1.2em;
+    color: #333;
+    margin: 10px 0;
+}
+
+/* Text Formatting */
+.recipe-card p {
+    font-size: 0.9em;
+    margin: 5px 0;
+    color: #555;
+}
+
+/* Instructions Toggle */
+details {
+    margin-top: 10px;
+    text-align: left;
+    background: #f8f8f8;
+    padding: 8px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+summary {
+    cursor: pointer;
+    font-weight: bold;
+    color: #007bff;
+    padding: 5px;
+}
+
+ul {
+    list-style: none;
+    padding-left: 10px;
+}
+
+ul li {
+    font-size: 0.85em;
+    color: #444;
+    padding: 3px 0;
+    text-align: left;
+}
+.recipe-card {
+    width: 300px; /* Adjust width */
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    margin: 10px;
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .recipe-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .recipe-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover; /* Ensure images don't stretch */
+    border-radius: 8px;
+    background: #f0f0f0;
+  }
+  
+  .recipe-card h3 {
+    font-size: 1.2rem;
+    margin: 10px 0;
+    color: #333;
+  }
+  
+  .recipe-card p {
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .expand-instructions {
+    color: #007bff;
+    font-weight: bold;
+    cursor: pointer;
+  }
