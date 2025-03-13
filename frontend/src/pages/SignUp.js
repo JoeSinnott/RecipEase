@@ -46,8 +46,8 @@ const SignUp = () => {
       });
 
       const result = await response.json();
-      if (result.error) {
-        setError(result.error);
+      if (!response.ok) {
+        setError(result.detail || "An error occurred while signing up.");
       } else {
         alert(result.message);
         navigate("/signin"); // Redirect to sign-in page
