@@ -25,6 +25,7 @@ def get_db_connection():
             password=os.getenv("DB_PASSWORD", "G53uPmjfOvBqLXrunGlcjdFRbSSxT9HtWk3P3oAEkTs"),
             database=os.getenv("DB_NAME", "2024_comp10120_cm5")
         )
+        print("Connected to database successfully!")
         return conn
     except sql.Error as e:
         print(f"Database connection failed: {str(e)}")
