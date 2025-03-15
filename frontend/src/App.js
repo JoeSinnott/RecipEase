@@ -7,8 +7,9 @@ import RecipesPage from "./pages/RecipesPage";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import ForgotPassword from "./pages/ForgotPassword";
-import SettingsPage from './pages/SettingsPage';
-import { ThemeProvider, useTheme } from './ThemeContext';
+import FavoritesPage from './pages/FavoritesPage';
+import CreateRecipePage from './pages/CreateRecipePage';
+import RecipeDetailPage from './pages/RecipeDetailPage';
 import "./styles.css";
 
 const PageTransitionWrapper = ({ children }) => {
@@ -23,35 +24,24 @@ const PageTransitionWrapper = ({ children }) => {
   return <div className={`page-transition ${showPage ? "fade-in" : "fade-out"}`}>{children}</div>;
 };
 
-
-const ApplyTheme = () => {
-  const { theme } = useTheme();
-  useEffect(() => {
-    document.body.className = theme;
-    }
-  , [theme]);
-};
-
 const App = () => {
-
   return (
-    <ThemeProvider>
-      <Router>
-        <ApplyTheme />
-        <Header />
-        <PageTransitionWrapper>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/recipes" element={<RecipesPage />} />
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-      	    <Route path="/settings" element={<SettingsPage />} />
-          </Routes>
-        </PageTransitionWrapper>
-        <Footer />
-      </Router>
-    </ThemeProvider>
+    <Router>
+      <Header />
+      <PageTransitionWrapper>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/recipes" element={<RecipesPage />} />
+          <Route path="/favorites" element={<FavoritesPage />} />
+          <Route path="/create-recipe" element={<CreateRecipePage/>} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/recipe/:id" element={<RecipeDetailPage />} />
+        </Routes>
+      </PageTransitionWrapper>
+      <Footer />
+    </Router>
   );
 };
 
