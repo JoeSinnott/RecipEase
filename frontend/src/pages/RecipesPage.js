@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import RecipeCard from "../components/RecipeCard";
 import "leaflet/dist/leaflet.css";
 import '../styles/RecipesPage.css';
+
 
 // ✅ Supermarket logos
 const logoUrls = {
@@ -113,6 +114,27 @@ const RecipesPage = () => {
     setSearch(e.target.value);
   };
 
+
+  const [sortOrder, setSortOrder] = useState("default"); // "default", "az", "za"
+
+  const sortedRecipes = useMemo(() => {
+    let sorted = [...recipes]; // Copy state to avoid mutation
+    if (sortOrder === "az") {
+      sorted.sort((a, b) => a.title.localeCompare(b.title));
+    } else if (sortOrder === "za") {
+      sorted.sort((a, b) => b.title.localeCompare(a.title));
+    }
+    return sorted;
+  }, [recipes, sortOrder]); // ✅ Dependency array ensures re-sorting when needed
+
+
+  const handleFilter = () => {
+    const newSortOrder = sortOrder === "default" ? "az" : sortOrder === "az" ? "za" : "default";
+    setSortOrder(newSortOrder); // Toggle the sort order
+  };
+  
+  
+
   // ✅ Add ingredient on Enter key press
   const handleAddIngredient = (e) => {
     if ((e.key === "Enter" || e.type === "click") && search.trim() !== "") {
@@ -131,7 +153,7 @@ const RecipesPage = () => {
   return (
     <main id="recipes-page">
       <div className="container">
-        <h2>Find Your Perfect Recipe</h2>
+        <h2>Find Recipes</h2>
 
         {/* ✅ Ingredient Input */}
         <div className="ingredient-input">
@@ -142,8 +164,11 @@ const RecipesPage = () => {
             onChange={handleInputChange}
             onKeyDown={handleAddIngredient}
           />
-          <button onClick={() => handleAddIngredient({ key: "Enter" })}>Add</button>
-        </div>
+          <div className="buttons">
+            <button onClick={() => handleAddIngredient({ key: "Enter" })}>Add</button>
+            <button className="filter-button" onClick={handleFilter}>Filter</button>
+            </div>
+          </div>
 
         {/* ✅ Display added ingredients */}
         <div className="ingredient-list">
@@ -162,8 +187,8 @@ const RecipesPage = () => {
           <p className="error">{error}</p>
         ) : (
           <section id="recipes-grid">
-            {recipes.length > 0 ? (
-              recipes.map((recipe) => (
+            {sortedRecipes.length > 0 ? (
+              sortedRecipes.map((recipe) => (
                 <RecipeCard key={recipe.id || Math.random()} recipe={recipe} />
               ))
             ) : (
