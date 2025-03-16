@@ -5,7 +5,7 @@ import RecipeCard from "../components/RecipeCard";
 import "leaflet/dist/leaflet.css";
 import '../styles/RecipesPage.css';
 
-// Supermarket logos
+// ✅ Supermarket logos
 const logoUrls = {
   "Tesco": "https://upload.wikimedia.org/wikipedia/en/b/b0/Tesco_Logo.svg",
   "Sainsbury's": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Sainsbury%27s_logo.png",
@@ -45,22 +45,21 @@ const RecipesPage = () => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ingredients }),
-      mode: "cors",  // ✅ Explicitly enable CORS
+      mode: "cors",
     })
-    
       .then(response => response.json())
       .then(data => {
-        console.log("API Response:", data);
+        console.log("✅ API Response:", data);
         setRecipes(data.suggested_recipes || []);
       })
       .catch(error => {
-        console.error("Error fetching recipes:", error);
+        console.error("❌ Error fetching recipes:", error);
         setError("Failed to fetch recipes. Please try again.");
       })
       .finally(() => setLoading(false));
   }, [ingredients]);
 
-  // ✅ Fetch supermarkets
+  // ✅ Fetch supermarkets and only show ones in `logoUrls`
   useEffect(() => {
     const fetchSupermarkets = async () => {
       const query = `
@@ -76,24 +75,33 @@ const RecipesPage = () => {
       try {
         const response = await fetch(url);
         const data = await response.json();
-        console.log("Fetched Supermarkets Data:", data.elements);
-        const places = data.elements.map((element) => {
-          let name = element.tags.brand || element.tags.name || "Unknown Supermarket";
+        console.log("✅ Fetched Supermarkets Data:", data.elements);
 
-          // Normalize supermarket names
-          Object.keys(logoUrls).forEach(brand => {
-            if (name.includes(brand)) name = brand;
-          });
+        const places = data.elements
+          .map((element) => {
+            let name = element.tags.brand || element.tags.name || "Unknown Supermarket";
 
-          if (logoUrls[name]) {
-            return { id: element.id, name, lat: element.lat, lon: element.lon };
-          }
-          return null;
-        }).filter(Boolean);
+            // ✅ Normalize supermarket names
+            Object.keys(logoUrls).forEach((brand) => {
+              if (name.toLowerCase().includes(brand.toLowerCase())) name = brand;
+            });
+
+            // ✅ Only include supermarkets that exist in `logoUrls` and have valid coordinates
+            if (logoUrls[name] && element.lat && element.lon) {
+              return {
+                id: element.id,
+                name: name,
+                lat: element.lat,
+                lon: element.lon,
+              };
+            }
+            return null;
+          })
+          .filter(Boolean); // ✅ Remove null values
 
         setSupermarkets(places);
       } catch (error) {
-        console.error("Error fetching supermarkets:", error);
+        console.error("❌ Error fetching supermarkets:", error);
       }
     };
 
@@ -111,7 +119,7 @@ const RecipesPage = () => {
       if (!ingredients.includes(search.trim())) {
         setIngredients([...ingredients, search.trim()]);
       }
-      setSearch(""); // Clear input field
+      setSearch(""); // ✅ Clear input field
     }
   };
 
@@ -157,7 +165,6 @@ const RecipesPage = () => {
             {recipes.length > 0 ? (
               recipes.map((recipe) => (
                 <RecipeCard key={recipe.id || Math.random()} recipe={recipe} />
-
               ))
             ) : (
               <p>No recipes found. Try different ingredients!</p>
@@ -170,12 +177,14 @@ const RecipesPage = () => {
           <h2>Find Nearby Supermarkets</h2>
           <MapContainer center={manchesterCenter} zoom={12} style={{ height: "400px", width: "80%", margin: "auto" }}>
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; OpenStreetMap contributors' />
+
             {supermarkets.map((place) => {
               const logoUrl = logoUrls[place.name];
+
               const customIcon = new L.Icon({
-                iconUrl: logoUrl,
-                iconSize: [25, 25],
-                iconAnchor: [12, 25],
+                iconUrl: logoUrl || "/default-logo.png",
+                iconSize: place.name === "Asda" ? [35, 10] : [30, 30], // ✅ Adjust Asda logo
+                iconAnchor: place.name === "Asda" ? [10, 5] : [15, 30],
                 popupAnchor: [0, -25],
               });
 
