@@ -147,34 +147,84 @@ header .cta-buttons .btn:hover {
     text-align: center;
 }
 
+/* Heading Style */
 #features h3 {
     font-size: 2rem;
     margin-bottom: 1.5rem;
 }
 
+/* Feature Cards Container */
 .feature-cards {
+    margin-top: 20px;
     display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
+    justify-content: flex-start; /* Align cards to the left */
+    flex-wrap: nowrap; /* Prevent wrapping */
+    gap: 3rem; /* Adds spacing between cards */
+    margin-left: 75px; /* Move the cards to the left */
+    width: 105%;
 }
 
+/* Feature Card Styling */
 .feature-cards .card {
-    background: #f9f9f9;
+    background: linear-gradient(135deg, #f9f9f9 0%, #f1f1f1 100%);
     padding: 1.5rem;
-    margin: 1rem;
-    border-radius: 8px;
+    margin: 0; /* Remove margin to prevent extra space around the cards */
+    border-radius: 12px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    width: 300px;
+    width: 25%; /* Increase the width to make cards bigger */
+    max-width: 300px; /* Max width for cards */
+    flex-grow: 1; /* Allow cards to grow to fit available space */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add smooth transition */
+    height: 125px;    
+
 }
 
+/* Hover Effect */
+.feature-cards .card:hover {
+    transform: scale(1.001);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Softer, more subtle shadow */
+}
+
+/* Card Headings */
 .feature-cards .card h4 {
     font-size: 1.2rem;
     margin-bottom: 0.5rem;
 }
 
+/* Card Text */
 .feature-cards .card p {
     font-size: 0.9rem;
 }
+
+@keyframes cardHover {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.01);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.feature-cards .card:hover {
+    animation: cardHover 0.5s ease-in-out;
+}
+
+
+/* Mobile Responsiveness: Stack cards vertically on smaller screens */
+@media (max-width: 768px) {
+    .feature-cards .card {
+        width: 100%; /* Cards take full width on mobile */
+        max-width: none; /* Remove max-width on mobile */
+    }
+
+    .feature-cards {
+        gap: 1.5rem; /* Reduce gap between cards on mobile */
+    }
+}
+
 
 /* Popular Recipes */
 #recipes {

@@ -155,3 +155,148 @@
   color: #e64a19;
   transform: scale(1.1); /* Slightly enlarges the link on hover */
 }
+
+.features-heading {
+  color: #1d1d1f;
+  text-align: left; /* Align the text to the left */
+  margin-left: -300px; /* Remove the left margin if needed */
+  font-size: 24px; /* Optional: Adjust font size as needed */
+}
+
+.extra-text {
+  color: #a9a9ac; /* Change the color of the second sentence */
+  
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 10.2s ease-out, transform 10.2s ease-out;
+  /* transition-delay: 10s; /* This may not apply once .show is added */
+  }
+
+  /* Ensure delay applies after .show is added */
+.extra-text.show {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 1.2s; /* Explicitly apply delay */
+}
+
+
+.choose-us-heading {
+  color: #1d1d1f;
+  text-align: left; /* Align 'Why Choose Us?' to the left */
+  margin-left: -340px; /* Optional: Adds a little padding to the left for space */
+  font-size: 24px; /* Optional: Adjust font size as needed */
+  margin-top: 80px; /* Add space at the top to move it down */
+}
+
+.third-heading {
+  color: #1d1d1f;
+  text-align: left; 
+  margin-left: -175px; /* Optional: Adds a little padding to the left for space */
+  font-size: 24px; /* Optional: Adjust font size as needed */
+  margin-top: 80px; /* Add space at the top to move it down */
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Initially hidden elements */
+.features-heading,
+.choose-us-heading,
+.third-heading
+ {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1.2s ease-out, transform 1.2s ease-out;
+}
+
+/* Reveal animation */
+.reveal {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  transition: opacity 10.2s ease-out, transform 10.2s ease-out;
+
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hide elements initially */
+.animate {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1.5s ease-out, transform 1.5s ease-out;
+}
+
+/* Show when in viewport */
+.animate.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Main Heading */
+.main-heading {
+  font-size: 2.85rem;
+  font-weight: bold;
+  text-align: left;
+  color: #1d1d1f;
+  white-space: normal;
+  word-wrap: break-word;
+  margin-left: -500px;
+  margin-bottom: 3rem;
+  transition-delay: 1.4s;
+  margin-top: 1.5rem;
+}
+
+/* Extra Text */
+.main-heading .extra-text {
+  display: block;
+  font-size: 2.7rem;
+  font-weight: normal;
+  color: #7c7c7e;
+  margin-top: 0.5rem;
+  margin-bottom: 3.5rem;
+  transition-delay: 0.7s; /* Extra text appears slightly after the main heading */
+}
+
+/* Main Heading */
+.fourth-heading {
+  font-size: 2.65rem;
+  font-weight: bold;
+  text-align: left;
+  color: #1d1d1f;
+  white-space: normal;
+  word-wrap: break-word;
+  margin-left: -500px;
+  margin-bottom: 3rem;
+  transition-delay: 1.4s;
+  margin-top: 1.5rem;
+}
+
+/* Extra Text */
+.fourth-heading .extra-text {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: normal;
+  color: #7c7c7e;
+  margin-top: 0.5rem;
+  margin-bottom: 3.5rem;
+  transition-delay: 0.7s; /* Extra text appears slightly after the main heading */
+}
+
+
