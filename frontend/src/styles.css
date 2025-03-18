@@ -13,6 +13,11 @@ body {
     background-color: #f9f9f9;
 }
 
+.dark {
+    color: #f9f9f9;
+    background-color: #000000;
+}
+
 h1, h2, h3, h4 {
     font-family: 'Georgia', serif;
     color: #222;
@@ -111,7 +116,6 @@ header .cta-buttons .btn:hover {
     animation: heroFloat 6s infinite ease-in-out;
 }
 
-
 #hero h2 {
     font-size: 2.5rem;
     margin-bottom: 1rem;
@@ -145,9 +149,18 @@ header .cta-buttons .btn:hover {
     text-align: center;
 }
 
+body.dark #features {
+    color: #f9f9f9;
+    background-color: #000000;
+}
+
 #features h3 {
     font-size: 2rem;
     margin-bottom: 1.5rem;
+}
+
+body.dark #features h3 {
+    color: #f9f9f9;
 }
 
 .feature-cards {
@@ -165,9 +178,18 @@ header .cta-buttons .btn:hover {
     width: 300px;
 }
 
+body.dark .feature-cards .card {
+    color: #f9f9f9;
+    background-color: #262525;
+}
+
 .feature-cards .card h4 {
     font-size: 1.2rem;
     margin-bottom: 0.5rem;
+}
+
+body.dark .feature-cards .card h4 {
+    color: #f9f9f9;
 }
 
 .feature-cards .card p {
@@ -192,6 +214,11 @@ header .cta-buttons .btn:hover {
     gap: 1.5rem;
 }
 
+body.dark #recipes .recipe-grid {
+    color: #f9f9f9;
+    background-color: #000000;
+}
+
 .recipe-card {
     background: #fff;
     border-radius: 8px;
@@ -203,6 +230,14 @@ header .cta-buttons .btn:hover {
     display: flex;
     flex-direction: column;
     justify-content: space-between; /* Ensures spacing consistency */
+}
+
+body.dark .recipe-card {
+    background: #262525;
+}
+
+body.dark .recipe-card h3 {
+    color:#f9f9f9;
 }
 
 /* Image settings (same as before) */
@@ -223,6 +258,11 @@ header .cta-buttons .btn:hover {
 .recipe-card p {
     font-size: 0.9rem;
     color: #555;
+}
+
+body.dark .recipe-card .recipe-info p,
+body.dark .recipe-card .recipe-info strong{
+    color: #f9f9f9;
 }
 
 /* When hovering over a card */
@@ -399,13 +439,14 @@ footer ul li a:hover {
     margin-top: 2rem;
 }
 
-
-
-
 #recipes-grid p {
     text-align: center;
     font-size: 1.2rem;
     color: #555;
+}
+
+body.dark #recipes-grid p {
+    color: #f9f9f9;
 }
 /* Shopping Planner Section */
 #shopping-planner {
@@ -616,7 +657,16 @@ html {
     color: green;
     margin-bottom: 10px;
   }
-   
+
+body.dark .auth-container {
+    color: #f9f9f9;
+    background-color: #262525;
+    border: 0px;
+}
+
+body.dark .auth-container h2 {
+    color: #f9f9f9;
+}
 
 /* Search Bar Container */
 /* Search Bar Container */
@@ -732,3 +782,36 @@ html {
   .favorite-btn:hover {
     transform: scale(1.1); /* Slight scale effect on hover */
   }
+
+body.dark .create-recipe-container {
+    background-color: #000000;
+}
+
+body.dark .create-recipe-container .container {
+    color: #f9f9f9;
+    background-color: #262525;
+}
+
+body.dark .create-recipe-container h2 {
+    color: #f9f9f9;
+}
+
+body.dark .recipes-section {
+    color: #f9f9f9;
+    background-color: #000000;
+}
+
+body.dark .recipes-section h2 {
+    color: #f9f9f9;
+}
+
+body.dark #recipes-page .container h2 {
+    color: #f9f9f9;
+    background-color: #000000;
+}
+
+body.dark .card-footer .view-details {
+    color: #f9f9f9;
+}
+
+
