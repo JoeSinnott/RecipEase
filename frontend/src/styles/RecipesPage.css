@@ -97,6 +97,30 @@ h2 {
   transform: scale(1.2);
 }
 
+.ingredient-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.buttons {
+  display: flex;
+  gap: 5px;
+}
+
+.filter-button {
+  background-color: #ff5722; /* Adjust color */
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.filter-button:hover {
+  background-color: #e64a19;
+}
+
+
 /* Recipe grid */
 #recipes-grid {
   display: grid;
@@ -104,6 +128,34 @@ h2 {
   gap: 2rem;
   padding: 2rem 0;
 }
+
+
+
+/* Basic styling for the filter button */
+.filter-button {
+  padding: 10px 20px;
+  background-color: #4CAF50; /* Green background */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.filter-button:hover {
+  background-color: #45a049; /* Slightly darker green */
+}
+
+/* Styling when the button is active (clicked) */
+.filter-button.active {
+  background-color: #f39c12; /* Orange background when active */
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+}
+
 
 /* Loading and error states */
 .loading, .error {

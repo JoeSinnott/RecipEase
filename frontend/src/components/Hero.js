@@ -5,8 +5,8 @@ const Hero = () => {
   return (
     <section id="hero">
       <div className="container">
-        <h2>Find Recipes with What’s in Your Fridge!</h2>
-        <p>Discover delicious recipes based on the ingredients you already have and nearby supermarket options.</p>
+        <h2>Discover Recipes.</h2>
+        <p>Explore delicious recipes based on the ingredients you already have and nearby supermarket options.</p>
         <div className="hero-cta">
           <Link to="/recipes" className="btn btn-primary">
             Find Recipes Now

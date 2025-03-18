@@ -115,6 +115,13 @@ const RecipesPage = () => {
     }
   };
 
+  const handleFilter = () => {
+    console.log("Filter button clicked!");
+    // Add filtering logic here
+  };  
+
+
+
   // ✅ Remove ingredient from list
   const handleRemoveIngredient = (ingredient) => {
     setIngredients(ingredients.filter((item) => item !== ingredient));
@@ -123,7 +130,7 @@ const RecipesPage = () => {
   return (
     <main id="recipes-page">
       <div className="container">
-        <h2>Find Your Perfect Recipe</h2>
+        <h2>Find Recipes</h2>
 
         {/* ✅ Ingredient Input */}
         <div className="ingredient-input">
@@ -134,8 +141,11 @@ const RecipesPage = () => {
             onChange={handleInputChange}
             onKeyDown={handleAddIngredient}
           />
-          <button onClick={() => handleAddIngredient({ key: "Enter" })}>Add</button>
-        </div>
+          <div className="buttons">
+            <button onClick={() => handleAddIngredient({ key: "Enter" })}>Add</button>
+            <button className="filter-button" onClick={handleFilter}>Filter</button>
+            </div>
+          </div>
 
         {/* ✅ Display added ingredients */}
         <div className="ingredient-list">

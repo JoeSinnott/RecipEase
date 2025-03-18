@@ -49,7 +49,10 @@ const FavoritesPage = () => {
               />
             ))
           ) : (
-            <p>No favorite recipes yet. Add some from the recipes page!</p>
+            <div className="no-favorites">
+              <p>No favorite recipes yet!</p>
+              <a href="/recipes" className="explore-link">Explore delicious recipes now! 🍽️</a>
+            </div>
           )}
         </div>
       </div>

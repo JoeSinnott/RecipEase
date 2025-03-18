@@ -10,7 +10,9 @@ import ForgotPassword from "./pages/ForgotPassword";
 import FavoritesPage from './pages/FavoritesPage';
 import CreateRecipePage from './pages/CreateRecipePage';
 import RecipeDetailPage from './pages/RecipeDetailPage';
+import SettingsPage from './pages/SettingsPage';
 import "./styles.css";
+import { useTheme } from './ThemeContext';
 
 const PageTransitionWrapper = ({ children }) => {
   const location = useLocation();
@@ -25,23 +27,33 @@ const PageTransitionWrapper = ({ children }) => {
 };
 
 const App = () => {
+  const { theme } = useTheme();
+
+  useEffect(() => {
+    document.body.className = theme; 
+    
+  }, [theme]);
+
+  console.log("App.js rendered");
+    
   return (
-    <Router>
-      <Header />
-      <PageTransitionWrapper>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/recipes" element={<RecipesPage />} />
-          <Route path="/favorites" element={<FavoritesPage />} />
-          <Route path="/create-recipe" element={<CreateRecipePage/>} />
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/recipe/:id" element={<RecipeDetailPage />} />
-        </Routes>
-      </PageTransitionWrapper>
-      <Footer />
-    </Router>
+      <Router>
+        <Header />
+        <PageTransitionWrapper>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/recipes" element={<RecipesPage />} />
+            <Route path="/favorites" element={<FavoritesPage />} />
+            <Route path="/create-recipe" element={<CreateRecipePage/>} />
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/recipe/:id" element={<RecipeDetailPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+          </Routes>
+        </PageTransitionWrapper>
+        <Footer />
+      </Router>
   );
 };
 

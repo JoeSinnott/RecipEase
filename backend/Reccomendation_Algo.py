@@ -1,5 +1,5 @@
 import mysql.connector as sql
-
+import random
 import json
 
 from difflib import get_close_matches
@@ -241,7 +241,27 @@ def recommend_recipes(user_ingredients, excluded_ingredients=None):
 
     }
 
- 
+ def get_quick_recipes():
+    """Fetch 3 random quick recipes (under 20 minutes)."""
+    conn = get_db_connection()
+    if not conn:
+        return {"error": "Database connection failed"}
+
+    cursor = conn.cursor(dictionary=True)
+    query = """
+        SELECT id, name, description, steps
+        FROM recipes
+        WHERE minutes <= 20
+    """
+    cursor.execute(query)
+    quick_recipes = cursor.fetchall()
+    
+    cursor.close()
+    conn.close()
+
+    # Shuffle and return only 3 recipes
+    random.shuffle(quick_recipes)
+    return quick_recipes[:3] if quick_recipes else []
 
 # Example test
 

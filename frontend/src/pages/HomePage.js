@@ -1,14 +1,14 @@
 import React from "react";
 import Hero from "../components/Hero";
 import Features from "../components/Features";
-import Recipes from "../components/Recipes";
+import QuickMeals from "../components/QuickMeals"; // New import
 
 const HomePage = () => {
   return (
     <main>
       <Hero />
       <Features />
-      <Recipes />
+      <QuickMeals /> {/* Add QuickMeals section here */}
     </main>
   );
 };
