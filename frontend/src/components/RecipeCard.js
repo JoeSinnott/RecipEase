@@ -3,14 +3,44 @@ import { addFavorite, removeFavorite, isFavorite } from '../pages/favoritesUtils
 import RecipeModal from './RecipeModal';
 import '../styles/RecipeCard.css';
 
+// Function to format database time (HH:MM:SS) to readable format
+const formatTimeDisplay = (timeStr) => {
+  if (!timeStr) return "N/A";
+  
+  // Convert to string if it's not already a string
+  timeStr = String(timeStr);
+  
+  // Check if already in h/m format
+  if (timeStr.includes('h') || timeStr.includes('m')) {
+    return timeStr;
+  }
+  
+  // Convert from HH:MM:SS format
+  const parts = timeStr.split(':');
+  if (parts.length >= 2) {
+    const hours = parseInt(parts[0]);
+    const minutes = parseInt(parts[1]);
+    
+    if (hours > 0 && minutes > 0) {
+      return `${hours}h ${minutes}m`;
+    } else if (hours > 0) {
+      return `${hours}h`;
+    } else if (minutes > 0) {
+      return `${minutes}m`;
+    }
+  }
+  
+  return timeStr; // Return as is if format is unknown
+};
+
 const RecipeCard = ({ recipe, onFavoriteToggle = null }) => {
   // Normalize recipe properties for different naming conventions
   const recipeId = recipe.RecipeId || recipe.id;
   const name = recipe.Name || recipe.name;
   const category = recipe.RecipeCategory || recipe.category;
   const images = recipe.Images || recipe.images || "/placeholder.jpg";
-  const prepTime = recipe.PrepTime || recipe.prepTime;
-  const cookTime = recipe.CookTime || recipe.cookTime;
+  const prepTime = formatTimeDisplay(recipe.PrepTime || recipe.prepTime);
+  const cookTime = formatTimeDisplay(recipe.CookTime || recipe.cookTime);
 
   const [isFavorited, setIsFavorited] = useState(false);
   const [showModal, setShowModal] = useState(false);

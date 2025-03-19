@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
@@ -10,6 +10,7 @@ import mysql.connector as sql
 import json
 import os
 from dotenv import load_dotenv
+import user_recipes
 
 # Load environment variables
 load_dotenv()
@@ -37,6 +38,9 @@ app.include_router(login_router)
 
 # Include the createrecipe route
 app.include_router(createrecipe_router)
+
+# Include the user_recipes route
+app.include_router(user_recipes.router)
 
 # ✅ Manually Handle OPTIONS Request for CORS Preflight
 @app.options("/recipes/suggest")
@@ -68,6 +72,11 @@ def get_db_connection():
 # Request model for recipe suggestions
 class RecipeRequest(BaseModel):
     ingredients: List[str]
+    page: int = 1
+    per_page: int = 12
+
+# Add a new Pydantic model for user recipe requests
+class UserRecipeRequest(BaseModel):
     page: int = 1
     per_page: int = 12
 

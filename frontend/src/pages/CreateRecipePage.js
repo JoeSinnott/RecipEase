@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/CreateRecipe.css';
 
 const CreateRecipePage = () => {
+  const navigate = useNavigate();
   const [recipeName, setRecipeName] = useState('');
   const [prepHours, setPrepHours] = useState('');
   const [prepMinutes, setPrepMinutes] = useState('');
@@ -24,6 +26,8 @@ const CreateRecipePage = () => {
   const [newIngredient, setNewIngredient] = useState('');
   const [instructions, setInstructions] = useState([]);
   const [newInstruction, setNewInstruction] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Calculate total time
   useEffect(() => {
@@ -32,7 +36,7 @@ const CreateRecipePage = () => {
     const totalMinutes = prepTime + cookTime;
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
-    setTotalTime(`${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`);
+    setTotalTime(`${hours}h ${minutes}m`);
   }, [prepHours, prepMinutes, cookHours, cookMinutes]);
 
   const addIngredient = () => {
@@ -75,27 +79,102 @@ const CreateRecipePage = () => {
     setNutrients({ ...nutrients, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    
+    // Format the data to match the API expectations
     const recipeData = {
-      recipeName,
+      name: recipeName,
+      category: recipeCategory,
       prepTime: `${prepHours}h ${prepMinutes}m`,
       cookTime: `${cookHours}h ${cookMinutes}m`,
       totalTime,
-      recipeCategory,
-      calories,
-      recipeServings,
-      nutrients,
-      ingredients,
-      instructions,
+      calories: calories || 0,
+      servings: recipeServings || 0,
+      nutrients: {
+        saturatedFat: nutrients.saturatedFat || 0,
+        cholesterol: nutrients.cholesterol || 0,
+        sodium: nutrients.sodium || 0,
+        carbohydrate: nutrients.carbohydrate || 0,
+        fiber: nutrients.fiber || 0,
+        sugar: nutrients.sugar || 0,
+        protein: nutrients.protein || 0
+      },
+      ingredients: ingredients,
+      instructions: instructions,
+      images: "/placeholder.jpg" // Default placeholder image
     };
-    console.log('Recipe Submitted:', recipeData);
+
+    try {
+      const response = await fetch('/api/recipes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(recipeData),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Recipe created successfully:', result);
+        
+        // Reset form after successful submission
+        setRecipeName('');
+        setPrepHours('');
+        setPrepMinutes('');
+        setCookHours('');
+        setCookMinutes('');
+        setRecipeCategory('');
+        setCalories('');
+        setRecipeServings('');
+        setNutrients({
+          saturatedFat: '',
+          cholesterol: '',
+          sodium: '',
+          carbohydrate: '',
+          fiber: '',
+          sugar: '',
+          protein: '',
+        });
+        setIngredients([]);
+        setInstructions([]);
+        
+        // Show success message
+        setSuccessMessage('Recipe created successfully! You can now view it in the User Recipes page.');
+      } else {
+        const error = await response.text();
+        console.error('Failed to create recipe:', error);
+        setSuccessMessage('');
+        alert('Failed to create recipe. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting recipe:', error);
+      setSuccessMessage('');
+      alert('Error submitting recipe. Please check your connection and try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleViewUserRecipes = () => {
+    navigate('/user-recipes');
   };
 
   return (
     <div className="create-recipe-container">
       <div className="container">
         <h2>Create a New Recipe</h2>
+        
+        {successMessage && (
+          <div className="success-message">
+            <p>{successMessage}</p>
+            <button onClick={handleViewUserRecipes} className="view-recipes-button">
+              View Your Recipes
+            </button>
+          </div>
+        )}
+        
         <form onSubmit={handleSubmit} className="recipe-form">
           {/* Left Column */}
           <div className="form-left">
@@ -166,7 +245,9 @@ const CreateRecipePage = () => {
               ))}
             </ol>
           </div> 
-            <button type="submit">Submit Recipe</button>
+            <button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Submitting...' : 'Submit Recipe'}
+            </button>
         </form>
       </div>
     </div>
