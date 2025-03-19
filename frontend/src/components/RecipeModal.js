@@ -81,6 +81,36 @@ const RecipeModal = ({ recipe, onClose, onFavoriteToggle = null }) => {
     e.stopPropagation();
   };
 
+  // Function to format database time (HH:MM:SS) to readable format
+  const formatTimeDisplay = (timeStr) => {
+    if (!timeStr) return "N/A";
+    
+    // Convert to string if it's not already a string
+    timeStr = String(timeStr);
+    
+    // Check if already in h/m format
+    if (timeStr.includes('h') || timeStr.includes('m')) {
+      return timeStr;
+    }
+    
+    // Convert from HH:MM:SS format
+    const parts = timeStr.split(':');
+    if (parts.length >= 2) {
+      const hours = parseInt(parts[0]);
+      const minutes = parseInt(parts[1]);
+      
+      if (hours > 0 && minutes > 0) {
+        return `${hours}h ${minutes}m`;
+      } else if (hours > 0) {
+        return `${hours}h`;
+      } else if (minutes > 0) {
+        return `${minutes}m`;
+      }
+    }
+    
+    return timeStr; // Return as is if format is unknown
+  };
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="recipe-modal" onClick={handleModalClick}>
@@ -112,7 +142,13 @@ const RecipeModal = ({ recipe, onClose, onFavoriteToggle = null }) => {
             <div className="modal-info">
               <div className="recipe-timing">
                 <div className="timing-item">
-                  <strong>Prep:</strong> {recipe.minutes ? `${recipe.minutes} mins` : "N/A"} {/* ✅ Fixed field name */}
+                  <strong>Prep Time:</strong> {formatTimeDisplay(recipe.prepTime || recipe.PrepTime)}
+                </div>
+                <div className="timing-item">
+                  <strong>Cook Time:</strong> {formatTimeDisplay(recipe.cookTime || recipe.CookTime)}
+                </div>
+                <div className="timing-item">
+                  <strong>Total Time:</strong> {formatTimeDisplay(recipe.totalTime || recipe.TotalTime)}
                 </div>
               </div>
               
