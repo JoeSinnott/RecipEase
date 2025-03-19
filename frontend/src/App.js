@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import HomePage from "./pages/HomePage";
@@ -9,11 +9,12 @@ import SignUp from "./pages/SignUp";
 import ForgotPassword from "./pages/ForgotPassword";
 import FavoritesPage from './pages/FavoritesPage';
 import CreateRecipePage from './pages/CreateRecipePage';
-import UserRecipesPage from './pages/UserRecipesPage';
 import RecipeDetailPage from './pages/RecipeDetailPage';
 import SettingsPage from './pages/SettingsPage';
 import "./styles.css";
 import { useTheme } from './ThemeContext';
+import UserHomePage from './pages/UserHomePage';
+import UserHeader from './components/UserHeader';
 
 const PageTransitionWrapper = ({ children }) => {
   const location = useLocation();
@@ -27,35 +28,64 @@ const PageTransitionWrapper = ({ children }) => {
   return <div className={`page-transition ${showPage ? "fade-in" : "fade-out"}`}>{children}</div>;
 };
 
-const App = () => {
+const AppContent = () => {
   const { theme } = useTheme();
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (err) {
+        console.error("Failed to parse user from localStorage:", err);
+        localStorage.removeItem("user"); // Clear invalid data
+      }
+    }
+  }, []);
 
   useEffect(() => {
     document.body.className = theme; 
-    
   }, [theme]);
+
+  const handleSignOut = () => {
+    setUser(null);
+    localStorage.removeItem("token"); // Clear token
+    localStorage.removeItem("user"); // Clear user data
+    navigate("/");
+  };
 
   console.log("App.js rendered");
     
   return (
-      <Router>
-        <Header />
+      <>
+      {user ? <UserHeader user={user} onSignOut={handleSignOut} /> : <Header />}
+      {/* ... */}
         <PageTransitionWrapper>
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/recipes" element={<RecipesPage />} />
             <Route path="/favorites" element={<FavoritesPage />} />
             <Route path="/create-recipe" element={<CreateRecipePage/>} />
-            <Route path="/user-recipes" element={<UserRecipesPage />} />
-            <Route path="/signin" element={<SignIn />} />
+            <Route path="/signin" element={<SignIn setUser={setUser}/>} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/recipe/:id" element={<RecipeDetailPage />} />
             <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/userhomepage" element={<UserHomePage />} />
           </Routes>
         </PageTransitionWrapper>
         <Footer />
-      </Router>
+      </>
+  );
+};
+
+const App = () => {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
   );
 };
 
