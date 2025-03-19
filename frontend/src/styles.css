@@ -6,7 +6,6 @@
 }
 
 /* Body and General Settings */
-/* Body and General Settings */
 body {
     font-family: 'Inter', sans-serif; /* Switch to Inter for modern, clean typography */
     line-height: 1.6;
@@ -815,4 +814,6 @@ body.dark .card-footer .view-details {
     color: #f9f9f9;
 }
 
-
+body.dark .recipes-section .conatiner .recipes-grid .no-favorites p {
+    color: #f9f9f9;
+}
