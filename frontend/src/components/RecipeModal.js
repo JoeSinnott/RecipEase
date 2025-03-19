@@ -5,26 +5,61 @@ import '../styles/RecipeModal.css';
 const RecipeModal = ({ recipe, onClose, onFavoriteToggle = null }) => {
   const [isFavorited, setIsFavorited] = useState(false);
   
-  // ✅ Fix: Use `id` instead of `RecipeId`
+  // Normalize recipe ID handling
+  const recipeId = recipe.RecipeId || recipe.id;
+  
+  // Function to update favorite status
+  const updateFavoriteStatus = () => {
+    const status = isFavorite(recipeId);
+    console.log('Modal checking favorite status for ID:', recipeId, 'Status:', status);
+    setIsFavorited(status);
+  };
+  
+  // Check favorite status when component mounts and when recipe changes
   useEffect(() => {
-    if (recipe && recipe.id) {
-      setIsFavorited(isFavorite(recipe.id));
-    }
-  }, [recipe?.id]);
+    updateFavoriteStatus();
+    
+    // Setup listener for storage events from other components
+    const handleStorageChange = () => {
+      console.log('Storage changed, updating modal favorite status');
+      updateFavoriteStatus();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('favoritesUpdated', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('favoritesUpdated', handleStorageChange);
+    };
+  }, [recipeId]);
 
   const handleFavoriteToggle = (e) => {
     e.stopPropagation();
+    e.preventDefault();
+    
+    console.log('Modal toggling favorite for ID:', recipeId, 'Current status:', isFavorited);
 
     if (isFavorited) {
-      removeFavorite(recipe.id); // ✅ Fixed
+      removeFavorite(recipeId); 
     } else {
-      addFavorite(recipe);
+      // Ensure recipe has RecipeId set before adding
+      const recipeToAdd = { ...recipe };
+      if (!recipeToAdd.RecipeId && recipeToAdd.id) {
+        recipeToAdd.RecipeId = recipeToAdd.id;
+      }
+      addFavorite(recipeToAdd);
     }
 
+    // Update UI immediately
     setIsFavorited(!isFavorited);
+    
+    // Notify other components about the change
+    window.dispatchEvent(new Event('storage'));
+    window.dispatchEvent(new CustomEvent('favoritesUpdated'));
 
     if (onFavoriteToggle) {
-      onFavoriteToggle(recipe.id, !isFavorited); // ✅ Fixed
+      onFavoriteToggle(recipeId, !isFavorited);
     }
   };
 

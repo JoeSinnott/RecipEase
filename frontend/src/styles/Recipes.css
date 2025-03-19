@@ -155,3 +155,330 @@
   color: #e64a19;
   transform: scale(1.1); /* Slightly enlarges the link on hover */
 }
+
+.features-heading {
+  color: #1d1d1f;
+  text-align: left; /* Align the text to the left */
+  margin-left: -300px; /* Remove the left margin if needed */
+  font-size: 24px; /* Optional: Adjust font size as needed */
+}
+
+.extra-text {
+  color: #a9a9ac; /* Change the color of the second sentence */
+  
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 10.2s ease-out, transform 10.2s ease-out;
+  /* transition-delay: 10s; /* This may not apply once .show is added */
+  }
+
+  /* Ensure delay applies after .show is added */
+.extra-text.show {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.9s; /* Explicitly apply delay */
+}
+
+
+.choose-us-heading {
+  color: #1d1d1f;
+  text-align: left; /* Align 'Why Choose Us?' to the left */
+  margin-left: -340px; /* Optional: Adds a little padding to the left for space */
+  font-size: 24px; /* Optional: Adjust font size as needed */
+  margin-top: 80px; /* Add space at the top to move it down */
+}
+
+.third-heading {
+  color: #1d1d1f;
+  text-align: left; 
+  margin-left:-175px; /* Optional: Adds a little padding to the left for space */
+  font-size: 26px; /* Optional: Adjust font size as needed */
+  margin-top: 80px; /* Add space at the top to move it down */
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Initially hidden elements */
+.features-heading,
+.choose-us-heading,
+.third-heading
+ {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1.2s ease-out, transform 1.2s ease-out;
+}
+
+/* Reveal animation */
+.reveal {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  transition: opacity 10.2s ease-out, transform 10.2s ease-out;
+
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hide elements initially */
+.animate {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1.5s ease-out, transform 1.5s ease-out;
+}
+
+/* Show when in viewport */
+.animate.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Main Heading */
+.main-heading {
+  font-size: 2.85rem;
+  font-weight: bold;
+  text-align: left;
+  color: #1d1d1f;
+  white-space: normal;
+  word-wrap: break-word;
+  margin-left: -500px;
+  margin-bottom: 100px;
+  transition-delay: 1.3s;
+  margin-top: 1.5rem;
+}
+
+/* Extra Text */
+.main-heading .extra-text {
+  display: block;
+  font-size: 2.7rem;
+  font-weight: normal;
+  color: #7c7c7e;
+  margin-top: 0.5rem;
+  margin-bottom: 3.5rem;
+  transition-delay: 0.46s; /* Extra text appears slightly after the main heading */
+}
+
+
+.fourth-heading {
+  font-size: 2.65rem;
+  font-weight: bold;
+  text-align: left;
+  color: #1d1d1f;
+  white-space: normal;
+  word-wrap: break-word;
+  margin-left: -500px;
+  margin-bottom: 3rem;
+  transition-delay: 0.4s;
+  margin-top: 200px;
+}
+
+/* Extra Text */
+.fourth-heading .extra-text {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: normal;
+  color: #7c7c7e;
+  margin-top: 0.5rem;
+  margin-bottom: 3.5rem;
+  transition-delay: 0.7s; /* Extra text appears slightly after the main heading */
+}
+
+.fifth-heading {
+  font-size: 4.75rem;
+  font-weight: bold;
+  text-align: left;
+  color: #1d1d1f;
+  white-space: normal;
+  word-wrap: break-word;
+  margin-left: -600px;
+  margin-bottom: 2rem;
+  transition-delay: 0.4s;
+  margin-top: 1.5rem;
+}
+
+/* Extra Text */
+.fifth-heading .extra-text {
+  display: block;
+  text-align: right;
+  font-size: 2.75rem;
+  font-weight: normal;
+  color: #7c7c7e;
+  margin-top: -0.5rem;
+  margin-bottom: 3.5rem;
+  transition-delay: 0.4s; /* Extra text appears slightly after the fifth heading */
+}
+
+.story-description {
+  display: block; /* Ensures full width usage */
+  width: auto; 
+  margin-left: 80px;
+  margin-top: -220px;
+  margin-bottom: 100PX;
+  font-size: 1.1rem;
+  color: #666;
+  word-wrap: break-word; /* Ensures wrapping */
+  overflow-wrap: break-word; /* Alternative for long words */
+  text-align: left;
+  transition-delay: 1.4s; /* Extra text appears slightly after the main heading */
+}
+
+.story-btn {
+  display: inline-block;
+  margin-top: -80px;
+  margin-left: -60px;
+  margin-bottom: 200px;
+  padding: 10px 20px;
+  background-color: #0c0c0c; /* Dark button color */
+  color: white;
+  font-size: 0.9rem;
+  text-decoration: none;
+  border-radius: 5px;
+  transition-delay: 1.3s; /* Extra text appears slightly after the main heading */
+}
+
+.story-btn:hover {
+  transform: scale(1.05); /* Slight scale effect */
+  background-color: #333; /* Change to a subtle lighter shade of black or gray */
+  transition: transform 0.3s ease, background-color 0.3s ease; /* Smooth scaling and background color change */
+
+}
+
+
+
+
+
+.lead-heading {
+  font-size: 3.75rem;
+  font-weight: bold;
+  text-align: left;
+  color: #1d1d1f;
+  white-space: normal;
+  word-wrap: break-word;
+  margin-left: -500px;
+  margin-bottom: 2rem;
+  transition-delay: 0.4s;
+  margin-top: 100px;
+}
+
+/* Extra Text */
+.lead-heading .extra-text {
+  display: block;
+  text-align: right;
+  font-size: 2rem;
+  font-weight: normal;
+  color: #7c7c7e;
+  margin-top: -0.5rem;
+  margin-bottom: 3.5rem;
+  margin-right: 3px;
+  transition-delay: 0.4s; /* Extra text appears slightly after the lead heading */
+}
+
+.lead-description {
+  display: block; /* Ensures full width usage */
+  width: auto; 
+  margin-left: -250px;
+  margin-top: -90px;
+  margin-bottom: 100PX;
+  font-size: 1.1rem;
+  color: #666;
+  word-wrap: break-word; /* Ensures wrapping */
+  overflow-wrap: break-word; /* Alternative for long words */
+  text-align: right;
+  transition-delay: 1.4s; /* Extra text appears slightly after the main heading */
+}
+
+.lead-btn {
+  display: inline-block;
+  margin-top: -80px;
+  margin-bottom: 150px ;
+  margin-left: -130px;
+  padding: 10px 20px;
+  background-color: #0c0c0c; /* Dark button color */
+  color: white;
+  font-size: 0.9rem;
+  text-decoration: none;
+  border-radius: 5px;
+  transition-delay: 1.3s; /* Extra text appears slightly after the main heading */
+}
+
+.lead-btn:hover {
+  transform: scale(1.05); /* Slight scale effect */
+  background-color: #333; /* Change to a subtle lighter shade of black or gray */
+  transition: transform 0.3s ease, background-color 0.3s ease; /* Smooth scaling and background color change */
+
+}
+
+
+
+/* Container for the cards */ 
+.service-cards-container {
+  display: flex;
+  overflow-x: auto; /* Enable horizontal scrolling */
+  overflow-y: hidden; /* Prevent vertical scrolling */
+  gap: 1.5rem;
+  margin-top: 2rem;
+  padding: 0 1rem;
+  scrollbar-width: none; /* Hide scrollbar in Firefox */
+  -webkit-overflow-scrolling: touch; /* Enable smooth scrolling for touch devices */
+  max-width: 100%; /* Ensure it doesn't overflow beyond the viewport */
+  white-space: nowrap; /* Prevent line breaks within the container */
+}
+
+/* Hide the scrollbar in WebKit browsers (Chrome, Safari) */
+.service-cards-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Individual service cards */
+.service-card {
+  background: linear-gradient(135deg, #f9f9f9 0%, #f1f1f1 100%);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  width: 250px; /* Fixed width for cards */
+  height: 300px; /* Set a fixed height for the cards */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  flex-shrink: 0; /* Prevent cards from shrinking */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Align content at the top of the card */
+}
+
+/* Hover effect on the card */
+.service-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Styling for card headings */
+.service-card h4 {
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+  text-align: left; /* Align text to the left */
+  white-space: normal; /* Ensure text wraps if it's too long */
+  word-wrap: break-word; /* Ensure long words break to the next line */
+}
+
+/* Styling for card descriptions */
+.service-card p {
+  font-size: 1rem;
+  text-align: left; /* Align text to the left */
+  white-space: normal; /* Ensure text wraps */
+  word-wrap: break-word; /* Break long words */
+}
