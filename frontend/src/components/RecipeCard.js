@@ -4,19 +4,27 @@ import RecipeModal from './RecipeModal';
 import '../styles/RecipeCard.css';
 
 const RecipeCard = ({ recipe, onFavoriteToggle = null }) => {
+  // Normalize recipe properties for different naming conventions
+  const recipeId = recipe.RecipeId || recipe.id;
+  const name = recipe.Name || recipe.name;
+  const category = recipe.RecipeCategory || recipe.category;
+  const images = recipe.Images || recipe.images || "/placeholder.jpg";
+  const prepTime = recipe.PrepTime || recipe.prepTime;
+  const cookTime = recipe.CookTime || recipe.cookTime;
+
   const [isFavorited, setIsFavorited] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    setIsFavorited(isFavorite(recipe.id)); // ✅ Fixed
-  }, [recipe.id, showModal]); 
+    setIsFavorited(isFavorite(recipeId));
+  }, [recipeId, showModal]);
 
   const handleFavoriteToggle = (e) => {
     e.stopPropagation();
     const newFavStatus = !isFavorited;
 
     if (isFavorited) {
-      removeFavorite(recipe.id); // ✅ Fixed
+      removeFavorite(recipeId);
     } else {
       addFavorite(recipe);
     }
@@ -24,7 +32,7 @@ const RecipeCard = ({ recipe, onFavoriteToggle = null }) => {
     setIsFavorited(newFavStatus);
 
     if (onFavoriteToggle) {
-      onFavoriteToggle(recipe.id, newFavStatus); // ✅ Fixed
+      onFavoriteToggle(recipeId, newFavStatus);
     }
   };
 
@@ -36,13 +44,13 @@ const RecipeCard = ({ recipe, onFavoriteToggle = null }) => {
   const closeModal = () => {
     setShowModal(false);
     document.body.style.overflow = 'auto';
-    setIsFavorited(isFavorite(recipe.id)); // ✅ Fixed
+    setIsFavorited(isFavorite(recipeId));
   };
 
   const handleModalFavoriteToggle = (recipeId, favStatus) => {
     setIsFavorited(favStatus);
     if (onFavoriteToggle) {
-      onFavoriteToggle(recipe.id, favStatus);
+      onFavoriteToggle(recipeId, favStatus);
     }
   };
 
@@ -50,16 +58,21 @@ const RecipeCard = ({ recipe, onFavoriteToggle = null }) => {
     <>
       <div className="recipe-card" onClick={openModal}>
         <img 
-          src={recipe.Images || "/placeholder.jpg"}  
-          alt={recipe.name || "Recipe Image"} 
-          className="recipe-image" 
+          src={images}  
+          alt={name || "Recipe Image"} 
+          className="recipe-image"
+          onError={(e) => {
+            e.target.onerror = null; // Prevent infinite loop
+            e.target.src = "/placeholder.jpg";
+          }}
         />
 
-        <h3>{recipe.name || "Unnamed Recipe"}</h3> 
+        <h3>{name || "Unnamed Recipe"}</h3>
         
         <div className="recipe-info">
-          <p><strong>Category:</strong> {recipe.category || "N/A"}</p>
-          <p><strong>Prep:</strong> {recipe.minutes ? `${recipe.minutes} mins` : "N/A"}</p>
+          <p><strong>Category:</strong> {category || "N/A"}</p>
+          <p><strong>Prep:</strong> {prepTime || "N/A"}</p>
+          {cookTime && <p><strong>Cook:</strong> {cookTime}</p>}
         </div>
 
         <div className="card-footer">

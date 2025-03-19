@@ -64,17 +64,19 @@ def get_db_connection():
     except sql.Error as e:
         print(f"❌ Database connection failed: {str(e)}")
         return None
-# ✅ Request model for recipe suggestions
+
+# Request model for recipe suggestions
 class RecipeRequest(BaseModel):
     ingredients: List[str]
+    page: int = 1
+    per_page: int = 12
 
-# ✅ Root endpoint (Test if API is running)
+# Root endpoint (Test if API is running)
 @app.get("/")
 def read_root():
     return {"message": "API is working!"}
 
-
-# ✅ API to suggest recipes based on ingredients
+# API to suggest recipes based on ingredients
 @app.post("/recipes/suggest")
 def suggest_recipes(request: RecipeRequest):
     """Fetches recipes that contain the provided ingredients."""
@@ -90,6 +92,21 @@ def suggest_recipes(request: RecipeRequest):
         if not request.ingredients:
             raise HTTPException(status_code=400, detail="No ingredients provided.")
 
+        # First, get total count of matching recipes
+        count_query = f"""
+            SELECT COUNT(DISTINCT r.RecipeId) as total
+            FROM recipes r
+            JOIN recipe_ingredients ri ON r.RecipeId = ri.RecipeId
+            JOIN ingredients i ON ri.IngredientId = i.IngredientId
+            WHERE i.Name IN ({','.join(['%s'] * len(request.ingredients))})
+        """
+        cursor.execute(count_query, tuple(request.ingredients))
+        total_recipes = cursor.fetchone()['total']
+
+        # Calculate offset for pagination
+        offset = (request.page - 1) * request.per_page
+
+        # Main query with pagination
         format_strings = ','.join(['%s'] * len(request.ingredients))
         query = f"""
             SELECT DISTINCT r.RecipeId, r.Name, r.RecipeInstructions, r.Ingredients, 
@@ -101,22 +118,18 @@ def suggest_recipes(request: RecipeRequest):
             WHERE i.Name IN ({format_strings})
             GROUP BY r.RecipeId
             ORDER BY COUNT(r.RecipeId) DESC
-            LIMIT 10;
+            LIMIT %s OFFSET %s;
         """
-        cursor.execute(query, tuple(request.ingredients))
+        cursor.execute(query, tuple(request.ingredients) + (request.per_page, offset))
         recipes = cursor.fetchall()
 
         if not recipes:
             print("⚠️ No recipes found for the given ingredients.")
-            return {"suggested_recipes": []}
-
-        # ✅ Debugging: Print raw database response
-        print("✅ Raw database response:", recipes)
+            return {"suggested_recipes": [], "total_recipes": 0}
 
         # Process the recipes before returning
         processed_recipes = []
         for recipe in recipes:
-            # ✅ Convert field names to match frontend expectations
             processed_recipe = {
                 "id": recipe.pop("RecipeId", None),
                 "name": recipe.pop("Name", "Unnamed Recipe"),
@@ -130,7 +143,6 @@ def suggest_recipes(request: RecipeRequest):
                 "ingredients": recipe.pop("Ingredients", "No ingredients listed"),
             }
 
-            # ✅ Handle recipe instructions (ensure it's an array)
             if recipe.get("RecipeInstructions"):
                 try:
                     if isinstance(recipe["RecipeInstructions"], str):
@@ -141,13 +153,12 @@ def suggest_recipes(request: RecipeRequest):
                 recipe["RecipeInstructions"] = ["No instructions available."]
             
             processed_recipe["instructions"] = recipe["RecipeInstructions"]
-
             processed_recipes.append(processed_recipe)
 
-        # ✅ Debugging: Print processed response
-        print("✅ Processed API response:", processed_recipes)
-
-        return {"suggested_recipes": processed_recipes}
+        return {
+            "suggested_recipes": processed_recipes,
+            "total_recipes": total_recipes
+        }
 
     except Exception as e:
         print(f"❌ Error fetching recipes: {str(e)}")
