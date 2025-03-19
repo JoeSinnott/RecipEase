@@ -14,6 +14,7 @@ ph = PasswordHasher()
 class User(BaseModel):
     email: str
     password: str
+    username: str
 
 # Function to connect to the database
 def get_db_connection():
@@ -52,7 +53,7 @@ async def signup(user: User):
     hashed_password = ph.hash(user.password)
 
     # Insert into database
-    cursor.execute("INSERT INTO users (Email, PasswordHash) VALUES (%s, %s)", (user.email, hashed_password))
+    cursor.execute("INSERT INTO users (Email, PasswordHash, Username) VALUES (%s, %s, %s)", (user.email, hashed_password, user.username))
     conn.commit()
     
     cursor.close()

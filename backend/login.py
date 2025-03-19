@@ -1,14 +1,20 @@
 import os
+import jwt
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 import mysql.connector as sql
 from argon2 import PasswordHasher
+from datetime import datetime, timedelta
 
 # Create a FastAPI router
 router = APIRouter()
 
 # Password hasher
 ph = PasswordHasher()
+
+SECRET_KEY = os.getenv("JWT_SECRET", "your-secret-key-here")  # Replace with a strong secret in production
+ALGORITHM = "HS256"  # JWT algorithm
+TOKEN_EXPIRY_MINUTES = 5  # Token expiration time
 
 # Request model for login
 class LoginRequest(BaseModel):
@@ -31,6 +37,17 @@ def get_db_connection():
         print(f"Database connection failed: {str(e)}")
         return None
 
+# Function to generate a JWT token
+def create_access_token(data: dict, expires_delta: timedelta = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(minutes=TOKEN_EXPIRY_MINUTES)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
 # Login route
 @router.post("/login")
 async def login(user: LoginRequest):
@@ -40,7 +57,7 @@ async def login(user: LoginRequest):
     
     cursor = conn.cursor(dictionary=True)  # Use dictionary=True to get column names
     
-    # Fetch user by email (Use `%s` for MySQL placeholders)
+    # Fetch user by email
     cursor.execute("SELECT * FROM users WHERE Email = %s", (user.email,))
     db_user = cursor.fetchone()
 
@@ -57,7 +74,25 @@ async def login(user: LoginRequest):
     except:
         raise HTTPException(status_code=400, detail="Invalid email or password.")
 
+    # Generate token
+    token_payload = {
+        "sub": db_user["Email"],  # Subject (typically user ID or email)
+        "user_id": db_user["UserId"] 
+    }
+    access_token = create_access_token(data=token_payload, expires_delta=timedelta(minutes=TOKEN_EXPIRY_MINUTES))
+
+    user_data = {
+        "username": db_user["Username"],
+        "email": db_user["Email"],
+        "user_id": db_user["UserId"]
+        # Add other fields as needed, e.g., "username": db_user["Username"]
+    }
+
     cursor.close()
     conn.close()
 
-    return {"message": "Login successful!"}
+    return {
+        "message": "Login successful!",
+        "token": access_token,
+        "user": user_data
+    }
