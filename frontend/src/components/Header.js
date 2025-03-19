@@ -14,6 +14,7 @@ const Header = () => {
             <li><Link to="/recipes">Recipes</Link></li>
             <li><Link to="/favorites">Favorites</Link></li>
             <li><Link to="/create-recipe">Create Recipe</Link></li>
+            <li><Link to="/user-recipes">User Recipes</Link></li>
             <li><Link to="/signin">Sign In</Link></li>
             <li><Link to="/signup">Sign Up</Link></li>
             <li><Link to="/settings">Settings</Link></li>

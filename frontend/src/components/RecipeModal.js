@@ -5,26 +5,61 @@ import '../styles/RecipeModal.css';
 const RecipeModal = ({ recipe, onClose, onFavoriteToggle = null }) => {
   const [isFavorited, setIsFavorited] = useState(false);
   
-  // ✅ Fix: Use `id` instead of `RecipeId`
+  // Normalize recipe ID handling
+  const recipeId = recipe.RecipeId || recipe.id;
+  
+  // Function to update favorite status
+  const updateFavoriteStatus = () => {
+    const status = isFavorite(recipeId);
+    console.log('Modal checking favorite status for ID:', recipeId, 'Status:', status);
+    setIsFavorited(status);
+  };
+  
+  // Check favorite status when component mounts and when recipe changes
   useEffect(() => {
-    if (recipe && recipe.id) {
-      setIsFavorited(isFavorite(recipe.id));
-    }
-  }, [recipe?.id]);
+    updateFavoriteStatus();
+    
+    // Setup listener for storage events from other components
+    const handleStorageChange = () => {
+      console.log('Storage changed, updating modal favorite status');
+      updateFavoriteStatus();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('favoritesUpdated', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('favoritesUpdated', handleStorageChange);
+    };
+  }, [recipeId]);
 
   const handleFavoriteToggle = (e) => {
     e.stopPropagation();
+    e.preventDefault();
+    
+    console.log('Modal toggling favorite for ID:', recipeId, 'Current status:', isFavorited);
 
     if (isFavorited) {
-      removeFavorite(recipe.id); // ✅ Fixed
+      removeFavorite(recipeId); 
     } else {
-      addFavorite(recipe);
+      // Ensure recipe has RecipeId set before adding
+      const recipeToAdd = { ...recipe };
+      if (!recipeToAdd.RecipeId && recipeToAdd.id) {
+        recipeToAdd.RecipeId = recipeToAdd.id;
+      }
+      addFavorite(recipeToAdd);
     }
 
+    // Update UI immediately
     setIsFavorited(!isFavorited);
+    
+    // Notify other components about the change
+    window.dispatchEvent(new Event('storage'));
+    window.dispatchEvent(new CustomEvent('favoritesUpdated'));
 
     if (onFavoriteToggle) {
-      onFavoriteToggle(recipe.id, !isFavorited); // ✅ Fixed
+      onFavoriteToggle(recipeId, !isFavorited);
     }
   };
 
@@ -44,6 +79,36 @@ const RecipeModal = ({ recipe, onClose, onFavoriteToggle = null }) => {
   // Prevent clicks within the modal from closing it
   const handleModalClick = (e) => {
     e.stopPropagation();
+  };
+
+  // Function to format database time (HH:MM:SS) to readable format
+  const formatTimeDisplay = (timeStr) => {
+    if (!timeStr) return "N/A";
+    
+    // Convert to string if it's not already a string
+    timeStr = String(timeStr);
+    
+    // Check if already in h/m format
+    if (timeStr.includes('h') || timeStr.includes('m')) {
+      return timeStr;
+    }
+    
+    // Convert from HH:MM:SS format
+    const parts = timeStr.split(':');
+    if (parts.length >= 2) {
+      const hours = parseInt(parts[0]);
+      const minutes = parseInt(parts[1]);
+      
+      if (hours > 0 && minutes > 0) {
+        return `${hours}h ${minutes}m`;
+      } else if (hours > 0) {
+        return `${hours}h`;
+      } else if (minutes > 0) {
+        return `${minutes}m`;
+      }
+    }
+    
+    return timeStr; // Return as is if format is unknown
   };
 
   return (
@@ -77,7 +142,13 @@ const RecipeModal = ({ recipe, onClose, onFavoriteToggle = null }) => {
             <div className="modal-info">
               <div className="recipe-timing">
                 <div className="timing-item">
-                  <strong>Prep:</strong> {recipe.minutes ? `${recipe.minutes} mins` : "N/A"} {/* ✅ Fixed field name */}
+                  <strong>Prep Time:</strong> {formatTimeDisplay(recipe.prepTime || recipe.PrepTime)}
+                </div>
+                <div className="timing-item">
+                  <strong>Cook Time:</strong> {formatTimeDisplay(recipe.cookTime || recipe.CookTime)}
+                </div>
+                <div className="timing-item">
+                  <strong>Total Time:</strong> {formatTimeDisplay(recipe.totalTime || recipe.TotalTime)}
                 </div>
               </div>
               

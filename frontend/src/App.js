@@ -9,6 +9,7 @@ import SignUp from "./pages/SignUp";
 import ForgotPassword from "./pages/ForgotPassword";
 import FavoritesPage from './pages/FavoritesPage';
 import CreateRecipePage from './pages/CreateRecipePage';
+import UserRecipesPage from './pages/UserRecipesPage';
 import RecipeDetailPage from './pages/RecipeDetailPage';
 import SettingsPage from './pages/SettingsPage';
 import "./styles.css";
@@ -45,6 +46,7 @@ const App = () => {
             <Route path="/recipes" element={<RecipesPage />} />
             <Route path="/favorites" element={<FavoritesPage />} />
             <Route path="/create-recipe" element={<CreateRecipePage/>} />
+            <Route path="/user-recipes" element={<UserRecipesPage />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
