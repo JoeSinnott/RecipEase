@@ -406,6 +406,7 @@
 .lead-btn {
   display: inline-block;
   margin-top: -80px;
+  margin-bottom: 150px ;
   margin-left: -130px;
   padding: 10px 20px;
   background-color: #0c0c0c; /* Dark button color */
@@ -425,7 +426,59 @@
 
 
 
+/* Container for the cards */ 
+.service-cards-container {
+  display: flex;
+  overflow-x: auto; /* Enable horizontal scrolling */
+  overflow-y: hidden; /* Prevent vertical scrolling */
+  gap: 1.5rem;
+  margin-top: 2rem;
+  padding: 0 1rem;
+  scrollbar-width: none; /* Hide scrollbar in Firefox */
+  -webkit-overflow-scrolling: touch; /* Enable smooth scrolling for touch devices */
+  max-width: 100%; /* Ensure it doesn't overflow beyond the viewport */
+  white-space: nowrap; /* Prevent line breaks within the container */
+}
 
+/* Hide the scrollbar in WebKit browsers (Chrome, Safari) */
+.service-cards-container::-webkit-scrollbar {
+  display: none;
+}
 
+/* Individual service cards */
+.service-card {
+  background: linear-gradient(135deg, #f9f9f9 0%, #f1f1f1 100%);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  width: 250px; /* Fixed width for cards */
+  height: 300px; /* Set a fixed height for the cards */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  flex-shrink: 0; /* Prevent cards from shrinking */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Align content at the top of the card */
+}
 
+/* Hover effect on the card */
+.service-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
 
+/* Styling for card headings */
+.service-card h4 {
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+  text-align: left; /* Align text to the left */
+  white-space: normal; /* Ensure text wraps if it's too long */
+  word-wrap: break-word; /* Ensure long words break to the next line */
+}
+
+/* Styling for card descriptions */
+.service-card p {
+  font-size: 1rem;
+  text-align: left; /* Align text to the left */
+  white-space: normal; /* Ensure text wraps */
+  word-wrap: break-word; /* Break long words */
+}
