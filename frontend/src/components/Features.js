@@ -50,8 +50,16 @@ const Features = () => {
           </div>
         </div>
 
+        <h1 className="lead-heading animate">
+          Designed by you.<br/> <span className="extra-text animate">Lead the way and innovate.</span>
+        </h1>
+        <p className="lead-description animate">
+        Create and share your recipe<br/ >for the world to enjoy.
+        </p>
+        <a href="/home" className="lead-btn animate">Create Now</a>
+
         <h3 className="choose-us-heading animate">
-          Why Choose Us? <span className="extra-text animate">Experience the difference today.</span>
+          Get started. <span className="extra-text animate">Experience the difference today.</span>
         </h3>
 
         <h3 className="third-heading animate">
@@ -70,6 +78,9 @@ const Features = () => {
           Get to know the passionate<br/ >individuals behind our journey.
         </p>
         <a href="/home" className="story-btn animate">Learn more</a>
+
+
+        
 
 
 

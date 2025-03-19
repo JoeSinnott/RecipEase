@@ -159,6 +159,7 @@ header .cta-buttons .btn:hover {
 /* Feature Cards Container */
 .feature-cards {
     margin-top: 20px;
+    margin-bottom: 70px;
     display: flex;
     justify-content: flex-start; /* Align cards to the left */
     flex-wrap: nowrap; /* Prevent wrapping */
