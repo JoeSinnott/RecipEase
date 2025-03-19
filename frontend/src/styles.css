@@ -155,6 +155,38 @@ header .cta-buttons .btn:hover {
     margin-bottom: 1.5rem;
 }
 
+body.dark #features {
+    background-color: #000000;
+}
+
+body.dark #features .lead-heading {
+    color: #f9f9f9;
+}
+
+body.dark #features .main-heading {
+    color: #f9f9f9;
+}
+
+body.dark #features .features-heading {
+    color: #f9f9f9;
+}
+
+body.dark #features .third-heading {
+    color: #f9f9f9;
+}
+
+body.dark #features .choose-us-heading {
+    color: #f9f9f9;
+}
+
+body.dark #features .fourth-heading {
+    color: #f9f9f9;
+}
+
+body.dark #features .fifth-heading {
+    color: #f9f9f9;
+}
+
 /* Feature Cards Container */
 .feature-cards {
     margin-top: 20px;
@@ -224,6 +256,10 @@ body.dark .feature-cards .card {
     background-color: #262525;
 }
 
+body.dark .feature-cards .card p {
+    color: #000000;
+}
+
 /* Card Headings */
 .feature-cards .card h4 {
     font-size: 1.2rem;
@@ -233,6 +269,10 @@ body.dark .feature-cards .card {
 /* Card Text */
 .feature-cards .card p {
     font-size: 0.9rem;
+}
+
+body.dark .service-card p {
+    color: #000000;
 }
 
 @keyframes cardHover {
