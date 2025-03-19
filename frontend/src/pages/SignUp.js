@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const SignUp = () => {
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -12,7 +13,7 @@ const SignUp = () => {
     e.preventDefault();
     setError(""); // Reset errors
 
-    if (!email || !password || !confirmPassword) {
+    if (!username || !email || !password || !confirmPassword) {
       setError("Please fill in all fields.");
       return;
     }
@@ -40,6 +41,7 @@ const SignUp = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          username: username,
           email: email,
           password: password,
         }),
@@ -62,6 +64,13 @@ const SignUp = () => {
       <h2>Sign Up</h2>
       {error && <p className="error">{error}</p>}
       <form onSubmit={handleSubmit}>
+        <input 
+          type="username" 
+          placeholder="Username" 
+          value={username} 
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
         <input 
           type="email" 
           placeholder="Email" 

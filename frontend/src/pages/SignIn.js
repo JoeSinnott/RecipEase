@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const SignIn = () => {
+const SignIn = ({setUser}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -17,7 +17,7 @@ const SignIn = () => {
     }
 
     try {
-      // Send a POST request to your PHP backend
+      // Send a POST request to your FastAPI backend
       const response = await fetch("http://127.0.0.1:8000/login", {
         method: "POST",
         headers: {
@@ -29,9 +29,21 @@ const SignIn = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Login successful
+        if (!data.token || !data.user) {
+          setError("Invalid response from server.");
+          return;
+        }
+        // Login successful, store token and user data
+        localStorage.setItem("token", data.token); // Store token (or user data) in localStorage
+
+        // Optionally, store user info as well
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        // Update user state in App.js
+        setUser(data.user);
+
         alert("Login Successful!");
-        navigate("/"); // Redirect to homepage
+        navigate("/userhomepage"); // Redirect to signed in homepage
       } else {
         // Login failed
         setError(data.message || "Invalid email or password.");
