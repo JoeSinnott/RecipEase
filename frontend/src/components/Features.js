@@ -10,7 +10,7 @@ const Features = () => {
           }
         });
       },
-      { threshold: 0.1 } // Triggers when 10% of the element is visible
+      { threshold: 0.02 } // Triggers when 7% of the element is visible
     );
 
     const elements = document.querySelectorAll(".animate");
@@ -62,6 +62,19 @@ const Features = () => {
           Help is here. <br />
           <span className="extra-text animate">Wheneven you need it<br/ >Get in contact or visit our FAQ.</span>
         </h1>
+
+        <h1 className="fifth-heading animate">
+          Our Story. <span className="extra-text animate">Meet the team.</span>
+        </h1>
+        <p className="story-description animate">
+          Get to know the passionate<br/ >individuals behind our journey.
+        </p>
+        <a href="/home" className="story-btn animate">Learn more</a>
+
+
+
+        
+
       </div>
     </section>
   );
