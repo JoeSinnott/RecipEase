@@ -176,7 +176,7 @@
 .extra-text.show {
   opacity: 1;
   transform: translateY(0);
-  transition-delay: 1s; /* Explicitly apply delay */
+  transition-delay: 0.9s; /* Explicitly apply delay */
 }
 
 
@@ -259,7 +259,7 @@
   word-wrap: break-word;
   margin-left: -500px;
   margin-bottom: 100px;
-  transition-delay: 1.4s;
+  transition-delay: 1.3s;
   margin-top: 1.5rem;
 }
 
@@ -271,7 +271,7 @@
   color: #7c7c7e;
   margin-top: 0.5rem;
   margin-bottom: 3.5rem;
-  transition-delay: 0.5s; /* Extra text appears slightly after the main heading */
+  transition-delay: 0.46s; /* Extra text appears slightly after the main heading */
 }
 
 

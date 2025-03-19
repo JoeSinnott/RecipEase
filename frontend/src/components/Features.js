@@ -10,7 +10,7 @@ const Features = () => {
           }
         });
       },
-      { threshold: 0.02 } // Triggers when 7% of the element is visible
+      { threshold: 0.015 } // Triggers when 1.5% of the element is visible
     );
 
     const elements = document.querySelectorAll(".animate");
@@ -32,19 +32,19 @@ const Features = () => {
         </h3>
 
         <div className="feature-cards">
-          <div className="card">
+          <div className="card animate">
             <h4>Ingredient Search</h4>
             <p>Meals from what you have.</p>
           </div>
-          <div className="card">
+          <div className="card animate">
             <h4>Market Search</h4>
             <p>Find local stores in your area.</p>
           </div>
-          <div className="card">
+          <div className="card animate">
             <h4>Save Favorites</h4>
             <p>Bookmark recipes for later.</p>
           </div>
-          <div className="card">
+          <div className="card animate">
             <h4>Create Recipes</h4>
             <p>Craft custom recipes.</p>
           </div>
@@ -60,7 +60,7 @@ const Features = () => {
 
         <h1 className="fourth-heading animate">
           Help is here. <br />
-          <span className="extra-text animate">Wheneven you need it<br/ >Get in contact or visit our FAQ.</span>
+          <span className="extra-text animate">Whenever you need it<br/ >Get in contact or visit our FAQ.</span>
         </h1>
 
         <h1 className="fifth-heading animate">
