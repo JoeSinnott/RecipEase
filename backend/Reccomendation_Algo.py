@@ -15,11 +15,6 @@ load_dotenv()
  
 
 def get_db_connection():
-
-    """Establish a connection to the MySQL database."""
-
-   def get_db_connection():
-    """Establish and return a MySQL database connection."""
     try:
         conn = sql.connect(
             host=os.getenv("DB_HOST", "dbhost.cs.man.ac.uk"),  # ✅ University database host
@@ -240,28 +235,6 @@ def recommend_recipes(user_ingredients, excluded_ingredients=None):
         "recommended_recipes": recipes if recipes else {"message": "No matching recipes found."}
 
     }
-
- def get_quick_recipes():
-    """Fetch 3 random quick recipes (under 20 minutes)."""
-    conn = get_db_connection()
-    if not conn:
-        return {"error": "Database connection failed"}
-
-    cursor = conn.cursor(dictionary=True)
-    query = """
-        SELECT id, name, description, steps
-        FROM recipes
-        WHERE minutes <= 20
-    """
-    cursor.execute(query)
-    quick_recipes = cursor.fetchall()
-    
-    cursor.close()
-    conn.close()
-
-    # Shuffle and return only 3 recipes
-    random.shuffle(quick_recipes)
-    return quick_recipes[:3] if quick_recipes else []
 
 # Example test
 

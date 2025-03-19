@@ -73,13 +73,6 @@ class RecipeRequest(BaseModel):
 def read_root():
     return {"message": "API is working!"}
 
-@app.get("/api/quick-meals")
-def quick_meals():
-    quick_recipes = get_quick_recipes()
-    if not quick_recipes:
-        return {"message": "No quick meals found."}
-    return quick_recipes
-
 
 # ✅ API to suggest recipes based on ingredients
 @app.post("/recipes/suggest")
