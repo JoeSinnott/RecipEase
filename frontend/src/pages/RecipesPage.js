@@ -29,13 +29,17 @@ const RecipesPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [supermarkets, setSupermarkets] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const recipesPerPage = 12;
 
   const manchesterCenter = [53.483959, -2.244644];
 
-  // ✅ Fetch recipes when ingredients change
+  // Fetch recipes when ingredients change
   useEffect(() => {
     if (ingredients.length === 0) {
       setRecipes([]);
+      setTotalPages(1);
       return;
     }
 
@@ -45,20 +49,38 @@ const RecipesPage = () => {
     fetch("http://127.0.0.1:8000/recipes/suggest", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ingredients }),
+      body: JSON.stringify({ 
+        ingredients,
+        page: currentPage,
+        per_page: recipesPerPage
+      }),
       mode: "cors",
     })
       .then(response => response.json())
       .then(data => {
         console.log("✅ API Response:", data);
-        setRecipes(data.suggested_recipes || []);
+        // Normalize the recipe data
+        const normalizedRecipes = (data.suggested_recipes || []).map(recipe => ({
+          id: recipe.RecipeId || recipe.id,
+          name: recipe.Name || recipe.name,
+          category: recipe.RecipeCategory || recipe.category,
+          images: recipe.Images || recipe.images,
+          prepTime: recipe.PrepTime || recipe.prepTime,
+          cookTime: recipe.CookTime || recipe.cookTime,
+          ingredients: recipe.Ingredients || recipe.ingredients,
+          instructions: recipe.RecipeInstructions || recipe.instructions,
+          calories: recipe.Calories || recipe.calories,
+          rating: recipe.AggregatedRating || recipe.rating
+        }));
+        setRecipes(normalizedRecipes);
+        setTotalPages(Math.ceil((data.total_recipes || 0) / recipesPerPage));
       })
       .catch(error => {
         console.error("❌ Error fetching recipes:", error);
         setError("Failed to fetch recipes. Please try again.");
       })
       .finally(() => setLoading(false));
-  }, [ingredients]);
+  }, [ingredients, currentPage]);
 
   // ✅ Fetch supermarkets and only show ones in `logoUrls`
   useEffect(() => {
@@ -109,45 +131,55 @@ const RecipesPage = () => {
     fetchSupermarkets();
   }, []);
 
-  // ✅ Handle ingredient input
   const handleInputChange = (e) => {
     setSearch(e.target.value);
   };
 
-
-  const [sortOrder, setSortOrder] = useState("default"); // "default", "az", "za"
+  const [sortOrder, setSortOrder] = useState("default");
 
   const sortedRecipes = useMemo(() => {
-    let sorted = [...recipes]; // Copy state to avoid mutation
-    if (sortOrder === "az") {
-      sorted.sort((a, b) => a.title.localeCompare(b.title));
-    } else if (sortOrder === "za") {
-      sorted.sort((a, b) => b.title.localeCompare(a.title));
-    }
+    let sorted = [...recipes];
+    
+    sorted.sort((a, b) => {
+      const aHasImage = a.images && a.images !== "/placeholder.jpg";
+      const bHasImage = b.images && b.images !== "/placeholder.jpg";
+      if (aHasImage && !bHasImage) return -1;
+      if (!aHasImage && bHasImage) return 1;
+      
+      if (sortOrder === "az") {
+        return a.name.localeCompare(b.name);
+      } else if (sortOrder === "za") {
+        return b.name.localeCompare(a.name);
+      }
+      return 0;
+    });
+    
     return sorted;
-  }, [recipes, sortOrder]); // ✅ Dependency array ensures re-sorting when needed
-
+  }, [recipes, sortOrder]);
 
   const handleFilter = () => {
     const newSortOrder = sortOrder === "default" ? "az" : sortOrder === "az" ? "za" : "default";
-    setSortOrder(newSortOrder); // Toggle the sort order
+    setSortOrder(newSortOrder);
   };
-  
-  
 
-  // ✅ Add ingredient on Enter key press
   const handleAddIngredient = (e) => {
     if ((e.key === "Enter" || e.type === "click") && search.trim() !== "") {
       if (!ingredients.includes(search.trim())) {
         setIngredients([...ingredients, search.trim()]);
+        setCurrentPage(1); // Reset to first page when adding new ingredients
       }
-      setSearch(""); // ✅ Clear input field
+      setSearch("");
     }
   };
 
-  // ✅ Remove ingredient from list
   const handleRemoveIngredient = (ingredient) => {
     setIngredients(ingredients.filter((item) => item !== ingredient));
+    setCurrentPage(1); // Reset to first page when removing ingredients
+  };
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -155,7 +187,6 @@ const RecipesPage = () => {
       <div className="container">
         <h2>Find Recipes</h2>
 
-        {/* ✅ Ingredient Input */}
         <div className="ingredient-input">
           <input
             type="text"
@@ -167,10 +198,9 @@ const RecipesPage = () => {
           <div className="buttons">
             <button onClick={() => handleAddIngredient({ key: "Enter" })}>Add</button>
             <button className="filter-button" onClick={handleFilter}>Filter</button>
-            </div>
           </div>
+        </div>
 
-        {/* ✅ Display added ingredients */}
         <div className="ingredient-list">
           {ingredients.map((ingredient, index) => (
             <span key={index} className="ingredient">
@@ -180,24 +210,43 @@ const RecipesPage = () => {
           ))}
         </div>
 
-        {/* ✅ Loading & Error Handling */}
         {loading ? (
           <p>Loading recipes...</p>
         ) : error ? (
           <p className="error">{error}</p>
         ) : (
-          <section id="recipes-grid">
-            {sortedRecipes.length > 0 ? (
-              sortedRecipes.map((recipe) => (
-                <RecipeCard key={recipe.id || Math.random()} recipe={recipe} />
-              ))
-            ) : (
-              <p>No recipes found. Try different ingredients!</p>
+          <>
+            <section id="recipes-grid">
+              {sortedRecipes.length > 0 ? (
+                sortedRecipes.map((recipe) => (
+                  <RecipeCard key={recipe.id || Math.random()} recipe={recipe} />
+                ))
+              ) : (
+                <p>No recipes found. Try different ingredients!</p>
+              )}
+            </section>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="pagination">
+                <button 
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </button>
+                <span>Page {currentPage} of {totalPages}</span>
+                <button 
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </button>
+              </div>
             )}
-          </section>
+          </>
         )}
 
-        {/* ✅ Supermarket Map */}
         <section id="supermarket-map">
           <h2>Find Nearby Supermarkets</h2>
           <MapContainer center={manchesterCenter} zoom={12} style={{ height: "400px", width: "80%", margin: "auto" }}>
@@ -208,7 +257,7 @@ const RecipesPage = () => {
 
               const customIcon = new L.Icon({
                 iconUrl: logoUrl || "/default-logo.png",
-                iconSize: place.name === "Asda" ? [35, 10] : [30, 30], // ✅ Adjust Asda logo
+                iconSize: place.name === "Asda" ? [35, 10] : [30, 30],
                 iconAnchor: place.name === "Asda" ? [10, 5] : [15, 30],
                 popupAnchor: [0, -25],
               });

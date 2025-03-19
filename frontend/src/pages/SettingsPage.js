@@ -84,7 +84,7 @@ const SettingsPage = () => {
 
   return (
     <div className={"auth-container"}>
-      <h1>Settings</h1>
+      <h2>Settings</h2>
 
       {/* Email Settings */}
       <div className="setting">
