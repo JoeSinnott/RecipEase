@@ -67,33 +67,33 @@ const RecipesPage = () => {
     setError(null);
 
     // ✅ Get the actual cooking time value for the API
-    let maxCookingTime = null;
-    if (cookingTimeFilter === "under15") maxCookingTime = 15;
-    else if (cookingTimeFilter === "under30") maxCookingTime = 30;
-    else if (cookingTimeFilter === "under60") maxCookingTime = 60;
-    else if (cookingTimeFilter === "custom" && customCookingTime) maxCookingTime = parseInt(customCookingTime);
+  // First calculate maxCookingTime before the fetch call
+let maxCookingTime = null;
+if (cookingTimeFilter === "under15") maxCookingTime = 15;
+else if (cookingTimeFilter === "under30") maxCookingTime = 30;
+else if (cookingTimeFilter === "under60") maxCookingTime = 60;
+else if (cookingTimeFilter === "custom" && customCookingTime) maxCookingTime = parseInt(customCookingTime);
 
-    fetch("http://127.0.0.1:8000/recipes/suggest", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ingredients,
-        excluded_ingredients: excludedIngredients, // ✅ Send excluded ingredients to API
-        page: currentPage,
-        per_page: recipesPerPage,
-        filters: {
-          max_cooking_time: maxCookingTime,
-          vegan_only: isVeganOnly,
-          dairy_free: isDairyFree
-        }
-      }),
-      mode: "cors",
-    })
+// Then use it in your fetch call
+fetch("http://127.0.0.1:8000/recipes/recommend", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    ingredients,
+    excluded_ingredients: excludedIngredients,
+    vegan_only: isVeganOnly,
+    dairy_free: isDairyFree,
+    max_cooking_time: maxCookingTime,  // This will be in minutes
+    page: currentPage,
+    per_page: recipesPerPage
+  }),
+  mode: "cors",
+})
       .then(response => response.json())
       .then(data => {
         console.log("✅ API Response:", data);
         // Normalize the recipe data
-        const normalizedRecipes = (data.suggested_recipes || []).map(recipe => ({
+        const normalizedRecipes = (data.recommended_recipes || []).map(recipe => ({
           id: recipe.RecipeId || recipe.id,
           name: recipe.Name || recipe.name || recipe.recipe_name,
           category: recipe.RecipeCategory || recipe.category,

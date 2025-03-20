@@ -99,6 +99,8 @@ class AdvancedRecipeRequest(BaseModel):
     dairy_free: bool = False
     page: int = 1
     per_page: int = 12
+    max_cooking_time: Optional[int] = None  # Add this line here
+
 
 # Helper functions from recommendation algorithm
 def get_all_ingredients():
@@ -287,6 +289,10 @@ def recommend_recipes(request: AdvancedRecipeRequest):
         if request.dairy_free:
             filter_condition += " AND NOT EXISTS (SELECT 1 FROM recipe_ingredients ri JOIN ingredients i ON ri.IngredientId = i.IngredientId WHERE ri.RecipeId = r.RecipeId AND i.DairyFree = FALSE) "
 
+        if request.max_cooking_time:
+            # Convert minutes to seconds (multiply by 60)
+            max_seconds = request.max_cooking_time * 60
+            filter_condition += f" AND (r.TotalTime <= '{max_seconds}' OR r.CookTime <= '{max_seconds}') "
         # First, get total count of matching recipes
         count_query = f"""
             SELECT COUNT(DISTINCT r.RecipeId) as total
