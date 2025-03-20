@@ -1,36 +1,51 @@
 import mysql.connector as sql
-import random
+
 import json
 
 from difflib import get_close_matches
 
 from decimal import Decimal
-import os
-from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
+import datetime
 
-
- 
-
-def get_db_connection():
+def convert_time_to_minutes(time_str):
+    """Convert HH:MM:SS format to total minutes."""
     try:
+        time_obj = datetime.datetime.strptime(time_str, "%H:%M:%S").time()
+        return time_obj.hour * 60 + time_obj.minute  # Convert to minutes
+    except ValueError:
+        return None  # Handle incorrect format
+
+# Example conversion in query processing
+for recipe in recipes:
+    recipe["CookTime"] = convert_time_to_minutes(recipe["CookTime"])
+    recipe["PrepTime"] = convert_time_to_minutes(recipe["PrepTime"])
+def get_db_connection():
+
+    """Establish a connection to the MySQL database."""
+
+    try:
+
         conn = sql.connect(
-            host=os.getenv("DB_HOST", "dbhost.cs.man.ac.uk"),  # ✅ University database host
-            user=os.getenv("DB_USER", "y46354js"),
-            password=os.getenv("DB_PASSWORD", "G53uPmjfOvBqLXrunGlcjdFRbSSxT9HtWk3P3oAEkTs"),
-            database=os.getenv("DB_NAME", "2024_comp10120_cm5"),
-            port=int(os.getenv("DB_PORT", 3306))  # ✅ Ensure correct port
+
+            host="dbhost.cs.man.ac.uk",
+
+            user="y46354js",
+
+            password="G53uPmjfOvBqLXrunGlcjdFRbSSxT9HtWk3P3oAEkTs",
+
+            database="2024_comp10120_cm5"
+
         )
 
-        print("✅ Connected to University Database!")
         return conn
+
     except sql.Error as e:
-        print(f"❌ Database connection failed: {str(e)}")
+
+        print(f"Database connection failed: {str(e)}")
+
         return None
 
- 
 
 def get_all_ingredients():
 
@@ -54,7 +69,6 @@ def get_all_ingredients():
 
     return ingredients
 
- 
 
 def fuzzy_match_ingredients(user_ingredients, all_ingredients):
 
@@ -76,7 +90,6 @@ def fuzzy_match_ingredients(user_ingredients, all_ingredients):
 
     return matched_ingredients
 
- 
 
 def decimal_serializer(obj):
 
@@ -88,11 +101,10 @@ def decimal_serializer(obj):
 
     raise TypeError(f"Type {type(obj)} not serializable")
 
- 
 
-def recommend_recipes(user_ingredients, excluded_ingredients=None):
+def recommend_recipes(user_ingredients, excluded_ingredients=None, vegan_only=False, dairy_free=False):
 
-    """Fetch recipes that match the given ingredients while excluding unwanted ingredients."""
+    """Fetch recipes that match the given ingredients while filtering based on dietary requirements."""
 
     conn = get_db_connection()
 
@@ -100,7 +112,7 @@ def recommend_recipes(user_ingredients, excluded_ingredients=None):
 
         return {"error": "Database connection failed"}
 
-   
+  
 
     cursor = conn.cursor(dictionary=True)
 
@@ -108,7 +120,7 @@ def recommend_recipes(user_ingredients, excluded_ingredients=None):
 
         return {"message": "No ingredients provided."}
 
-   
+  
 
     # Get all ingredient names for fuzzy matching
 
@@ -118,7 +130,7 @@ def recommend_recipes(user_ingredients, excluded_ingredients=None):
 
     excluded_ingredients = fuzzy_match_ingredients(excluded_ingredients, all_ingredients) if excluded_ingredients else []
 
-   
+  
 
     try:
 
@@ -130,7 +142,9 @@ def recommend_recipes(user_ingredients, excluded_ingredients=None):
 
         exclude_condition = ""
 
-       
+        filter_condition = ""
+
+      
 
         if excluded_ingredients:
 
@@ -154,6 +168,18 @@ def recommend_recipes(user_ingredients, excluded_ingredients=None):
 
        
 
+        if vegan_only:
+
+            filter_condition += " AND NOT EXISTS (SELECT 1 FROM recipe_ingredients ri JOIN ingredients i ON ri.IngredientId = i.IngredientId WHERE ri.RecipeId = r.RecipeId AND i.Vegan = FALSE) "
+
+       
+
+        if dairy_free:
+
+            filter_condition += " AND NOT EXISTS (SELECT 1 FROM recipe_ingredients ri JOIN ingredients i ON ri.IngredientId = i.IngredientId WHERE ri.RecipeId = r.RecipeId AND i.DairyFree = FALSE) "
+
+       
+
         query = f"""
 
             SELECT r.RecipeId, r.Name AS recipe_name, r.RecipeInstructions AS instructions
@@ -168,17 +194,19 @@ def recommend_recipes(user_ingredients, excluded_ingredients=None):
 
             {exclude_condition}
 
+            {filter_condition}
+
             GROUP BY r.RecipeId
 
         """
 
-       
+      
 
         cursor.execute(query, tuple(query_params))
 
         recipes = cursor.fetchall()
 
-       
+      
 
         # Fetch ingredients for each recipe
 
@@ -200,7 +228,7 @@ def recommend_recipes(user_ingredients, excluded_ingredients=None):
 
             recipe["ingredients"] = [row["ingredient_name"] for row in cursor.fetchall()]
 
-       
+      
 
         # Convert JSON fields to Python dictionaries
 
@@ -216,7 +244,7 @@ def recommend_recipes(user_ingredients, excluded_ingredients=None):
 
                     recipe["instructions"] = "Invalid JSON format"
 
-       
+      
 
     except sql.Error as e:
 
@@ -228,7 +256,7 @@ def recommend_recipes(user_ingredients, excluded_ingredients=None):
 
         conn.close()
 
-   
+  
 
     return {
 
@@ -236,14 +264,15 @@ def recommend_recipes(user_ingredients, excluded_ingredients=None):
 
     }
 
+
 # Example test
 
 if __name__ == "__main__":
 
-    user_ingredients = ["tomato", "cheese", "pasta"]  # Example input
+    user_ingredients = ["tomato", "pasta","onions"]  # Example input
 
-    excluded_ingredients = ["mushroom", "onion"]  # Example exclusions
+    excluded_ingredients = []  # Example exclusions
 
-    recommendations = recommend_recipes(user_ingredients, excluded_ingredients)
+    recommendations = recommend_recipes(user_ingredients, excluded_ingredients, vegan_only=False, dairy_free= True)
 
     print(json.dumps(recommendations, indent=4, default=decimal_serializer))

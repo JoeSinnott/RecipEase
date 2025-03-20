@@ -22,9 +22,20 @@ const logoUrls = {
   "SPAR": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Spar-logo.svg",
 };
 
+// ✅ Cooking time options
+const cookingTimeOptions = [
+  { value: "all", label: "All Cooking Times" },
+  { value: "under15", label: "Under 15 minutes" },
+  { value: "under30", label: "Under 30 minutes" },
+  { value: "under60", label: "Under 1 hour" },
+  { value: "custom", label: "Custom..." }
+];
+
 const RecipesPage = () => {
   const [search, setSearch] = useState("");
   const [ingredients, setIngredients] = useState([]);
+  const [excludedIngredients, setExcludedIngredients] = useState([]); // ✅ New excluded ingredients state
+  const [excludeSearch, setExcludeSearch] = useState(""); // ✅ New search state for exclusions
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -33,9 +44,18 @@ const RecipesPage = () => {
   const [totalPages, setTotalPages] = useState(1);
   const recipesPerPage = 12;
 
+  // ✅ Filter states
+  const [sortOrder, setSortOrder] = useState("default");
+  const [cookingTimeFilter, setCookingTimeFilter] = useState("all");
+  const [customCookingTime, setCustomCookingTime] = useState(""); // ✅ For custom cooking time input
+  const [isVeganOnly, setIsVeganOnly] = useState(false); // ✅ Vegan filter
+  const [isDairyFree, setIsDairyFree] = useState(false); // ✅ Dairy-free filter
+  const [activeFilterDropdown, setActiveFilterDropdown] = useState(null);
+  const [showExcludeSection, setShowExcludeSection] = useState(false); // ✅ Toggle exclude section
+
   const manchesterCenter = [53.483959, -2.244644];
 
-  // Fetch recipes when ingredients change
+  // Fetch recipes when ingredients or filters change
   useEffect(() => {
     if (ingredients.length === 0) {
       setRecipes([]);
@@ -46,13 +66,26 @@ const RecipesPage = () => {
     setLoading(true);
     setError(null);
 
+    // ✅ Get the actual cooking time value for the API
+    let maxCookingTime = null;
+    if (cookingTimeFilter === "under15") maxCookingTime = 15;
+    else if (cookingTimeFilter === "under30") maxCookingTime = 30;
+    else if (cookingTimeFilter === "under60") maxCookingTime = 60;
+    else if (cookingTimeFilter === "custom" && customCookingTime) maxCookingTime = parseInt(customCookingTime);
+
     fetch("http://127.0.0.1:8000/recipes/suggest", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         ingredients,
+        excluded_ingredients: excludedIngredients, // ✅ Send excluded ingredients to API
         page: currentPage,
-        per_page: recipesPerPage
+        per_page: recipesPerPage,
+        filters: {
+          max_cooking_time: maxCookingTime,
+          vegan_only: isVeganOnly,
+          dairy_free: isDairyFree
+        }
       }),
       mode: "cors",
     })
@@ -62,25 +95,26 @@ const RecipesPage = () => {
         // Normalize the recipe data
         const normalizedRecipes = (data.suggested_recipes || []).map(recipe => ({
           id: recipe.RecipeId || recipe.id,
-          name: recipe.Name || recipe.name,
+          name: recipe.Name || recipe.name || recipe.recipe_name,
           category: recipe.RecipeCategory || recipe.category,
           images: recipe.Images || recipe.images,
           prepTime: recipe.PrepTime || recipe.prepTime,
           cookTime: recipe.CookTime || recipe.cookTime,
+          totalTime: recipe.totalTime,
           ingredients: recipe.Ingredients || recipe.ingredients,
           instructions: recipe.RecipeInstructions || recipe.instructions,
           calories: recipe.Calories || recipe.calories,
           rating: recipe.AggregatedRating || recipe.rating
         }));
         setRecipes(normalizedRecipes);
-        setTotalPages(Math.ceil((data.total_recipes || 0) / recipesPerPage));
+        setTotalPages(Math.ceil((data.total_recipes || normalizedRecipes.length) / recipesPerPage));
       })
       .catch(error => {
         console.error("❌ Error fetching recipes:", error);
         setError("Failed to fetch recipes. Please try again.");
       })
       .finally(() => setLoading(false));
-  }, [ingredients, currentPage]);
+  }, [ingredients, excludedIngredients, currentPage, cookingTimeFilter, customCookingTime, isVeganOnly, isDairyFree]);
 
   // ✅ Fetch supermarkets and only show ones in `logoUrls`
   useEffect(() => {
@@ -135,17 +169,20 @@ const RecipesPage = () => {
     setSearch(e.target.value);
   };
 
-  const [sortOrder, setSortOrder] = useState("default");
+  // ✅ Handler for exclude ingredient search
+  const handleExcludeInputChange = (e) => {
+    setExcludeSearch(e.target.value);
+  };
 
   const sortedRecipes = useMemo(() => {
     let sorted = [...recipes];
-    
+   
     sorted.sort((a, b) => {
       const aHasImage = a.images && a.images !== "/placeholder.jpg";
       const bHasImage = b.images && b.images !== "/placeholder.jpg";
       if (aHasImage && !bHasImage) return -1;
       if (!aHasImage && bHasImage) return 1;
-      
+     
       if (sortOrder === "az") {
         return a.name.localeCompare(b.name);
       } else if (sortOrder === "za") {
@@ -153,13 +190,62 @@ const RecipesPage = () => {
       }
       return 0;
     });
-    
+   
     return sorted;
   }, [recipes, sortOrder]);
 
   const handleFilter = () => {
     const newSortOrder = sortOrder === "default" ? "az" : sortOrder === "az" ? "za" : "default";
     setSortOrder(newSortOrder);
+  };
+
+  // ✅ Filter dropdown handlers
+  const handleFilterToggle = (dropdown) => {
+    setActiveFilterDropdown(activeFilterDropdown === dropdown ? null : dropdown);
+  };
+
+  const handleCookingTimeFilter = (value) => {
+    setCookingTimeFilter(value);
+    if (value !== "custom") {
+      setCustomCookingTime("");
+    }
+    setActiveFilterDropdown(null);
+    setCurrentPage(1);
+  };
+
+  const handleCustomCookingTimeChange = (e) => {
+    const value = e.target.value.replace(/\D/g, ""); // Only allow digits
+    setCustomCookingTime(value);
+  };
+
+  const handleCustomCookingTimeSubmit = () => {
+    if (customCookingTime) {
+      setActiveFilterDropdown(null);
+      setCurrentPage(1);
+    }
+  };
+
+  const handleDietaryToggle = (type) => {
+    if (type === "vegan") {
+      setIsVeganOnly(!isVeganOnly);
+      setCurrentPage(1);
+    } else if (type === "dairyFree") {
+      setIsDairyFree(!isDairyFree);
+      setCurrentPage(1);
+    }
+  };
+
+  const handleResetFilters = () => {
+    setCookingTimeFilter("all");
+    setCustomCookingTime("");
+    setIsVeganOnly(false);
+    setIsDairyFree(false);
+    setSortOrder("default");
+    setExcludedIngredients([]);
+    setExcludeSearch("");
+    setShowExcludeSection(false);
+    setActiveFilterDropdown(null);
+    setCurrentPage(1);
   };
 
   const handleAddIngredient = (e) => {
@@ -177,9 +263,36 @@ const RecipesPage = () => {
     setCurrentPage(1); // Reset to first page when removing ingredients
   };
 
+  // ✅ Handlers for excluded ingredients
+  const handleAddExcludedIngredient = (e) => {
+    if ((e.key === "Enter" || e.type === "click") && excludeSearch.trim() !== "") {
+      if (!excludedIngredients.includes(excludeSearch.trim())) {
+        setExcludedIngredients([...excludedIngredients, excludeSearch.trim()]);
+        setCurrentPage(1);
+      }
+      setExcludeSearch("");
+    }
+  };
+
+  const handleRemoveExcludedIngredient = (ingredient) => {
+    setExcludedIngredients(excludedIngredients.filter((item) => item !== ingredient));
+    setCurrentPage(1);
+  };
+
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // ✅ Helper function to get active filter count
+  const getActiveFilterCount = () => {
+    let count = 0;
+    if (cookingTimeFilter !== "all") count++;
+    if (isVeganOnly) count++;
+    if (isDairyFree) count++;
+    if (sortOrder !== "default") count++;
+    if (excludedIngredients.length > 0) count++;
+    return count;
   };
 
   return (
@@ -197,8 +310,108 @@ const RecipesPage = () => {
           />
           <div className="buttons">
             <button onClick={() => handleAddIngredient({ key: "Enter" })}>Add</button>
-            <button className="filter-button" onClick={handleFilter}>Filter</button>
+            <button className="filter-button" onClick={handleFilter}>
+              {sortOrder === "default" ? "A-Z" : sortOrder === "az" ? "Z-A" : "Default"}
+            </button>
           </div>
+        </div>
+
+        {/* ✅ Toggle for exclude ingredients section */}
+        <button
+          className={`exclude-toggle ${showExcludeSection ? 'active' : ''}`}
+          onClick={() => setShowExcludeSection(!showExcludeSection)}
+        >
+          {showExcludeSection ? 'Hide' : 'Show'} Excluded Ingredients
+        </button>
+
+        {/* ✅ Excluded ingredients section */}
+        {showExcludeSection && (
+          <div className="exclude-section">
+            <div className="ingredient-input">
+              <input
+                type="text"
+                placeholder="Enter ingredient to exclude..."
+                value={excludeSearch}
+                onChange={handleExcludeInputChange}
+                onKeyDown={handleAddExcludedIngredient}
+              />
+              <button onClick={() => handleAddExcludedIngredient({ key: "Enter" })}>Exclude</button>
+            </div>
+           
+            <div className="ingredient-list excluded">
+              {excludedIngredients.map((ingredient, index) => (
+                <span key={index} className="ingredient excluded">
+                  {ingredient}{" "}
+                  <button onClick={() => handleRemoveExcludedIngredient(ingredient)}>×</button>
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ✅ Filter options */}
+        <div className="filter-container">
+          {/* Cooking Time Filter */}
+          <div className="filter-dropdown-wrapper">
+            <button
+              className={`filter-dropdown-btn ${cookingTimeFilter !== 'all' ? 'active' : ''}`}
+              onClick={() => handleFilterToggle('cookingTime')}
+            >
+              Cooking Time {cookingTimeFilter !== 'all' ? '✓' : '▼'}
+            </button>
+            {activeFilterDropdown === 'cookingTime' && (
+              <div className="filter-dropdown-content">
+                {cookingTimeOptions.map(option => (
+                  <div
+                    key={option.value}
+                    className={`filter-option ${cookingTimeFilter === option.value ? 'selected' : ''}`}
+                    onClick={() => handleCookingTimeFilter(option.value)}
+                  >
+                    {option.label}
+                  </div>
+                ))}
+                {cookingTimeFilter === 'custom' && (
+                  <div className="custom-time-input">
+                    <input
+                      type="text"
+                      placeholder="Max minutes..."
+                      value={customCookingTime}
+                      onChange={handleCustomCookingTimeChange}
+                    />
+                    <button onClick={handleCustomCookingTimeSubmit}>Apply</button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* ✅ Dietary Requirements */}
+          <div className="dietary-filters">
+            <label className={`dietary-option ${isVeganOnly ? 'active' : ''}`}>
+              <input
+                type="checkbox"
+                checked={isVeganOnly}
+                onChange={() => handleDietaryToggle('vegan')}
+              />
+              Vegan
+            </label>
+           
+            <label className={`dietary-option ${isDairyFree ? 'active' : ''}`}>
+              <input
+                type="checkbox"
+                checked={isDairyFree}
+                onChange={() => handleDietaryToggle('dairyFree')}
+              />
+              Dairy-Free
+            </label>
+          </div>
+
+          {/* Reset Filters Button */}
+          {getActiveFilterCount() > 0 && (
+            <button className="reset-filters-btn" onClick={handleResetFilters}>
+              Reset Filters ({getActiveFilterCount()})
+            </button>
+          )}
         </div>
 
         <div className="ingredient-list">
@@ -222,21 +435,21 @@ const RecipesPage = () => {
                   <RecipeCard key={recipe.id || Math.random()} recipe={recipe} />
                 ))
               ) : (
-                <p>No recipes found. Try different ingredients!</p>
+                <p className="no-recipes">No recipes found. Try different ingredients or adjust your filters!</p>
               )}
             </section>
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
               <div className="pagination">
-                <button 
+                <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
                 >
                   Previous
                 </button>
                 <span>Page {currentPage} of {totalPages}</span>
-                <button 
+                <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
                 >

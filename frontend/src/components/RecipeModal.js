@@ -83,33 +83,18 @@ const RecipeModal = ({ recipe, onClose, onFavoriteToggle = null }) => {
 
   // Function to format database time (HH:MM:SS) to readable format
   const formatTimeDisplay = (timeStr) => {
-    if (!timeStr) return "N/A";
-    
-    // Convert to string if it's not already a string
-    timeStr = String(timeStr);
-    
-    // Check if already in h/m format
-    if (timeStr.includes('h') || timeStr.includes('m')) {
-      return timeStr;
-    }
-    
-    // Convert from HH:MM:SS format
-    const parts = timeStr.split(':');
-    if (parts.length >= 2) {
-      const hours = parseInt(parts[0]);
-      const minutes = parseInt(parts[1]);
-      
-      if (hours > 0 && minutes > 0) {
-        return `${hours}h ${minutes}m`;
-      } else if (hours > 0) {
-        return `${hours}h`;
-      } else if (minutes > 0) {
-        return `${minutes}m`;
-      }
-    }
-    
-    return timeStr; // Return as is if format is unknown
+    if (!timeStr || timeStr === "N/A") return "N/A";
+  
+    timeStr = parseInt(timeStr, 10); // Ensure it's an integer (seconds)
+  
+    if (isNaN(timeStr)) return "Invalid Time Format"; // Handle unexpected cases
+  
+    const hours = Math.floor(timeStr / 3600); // Convert seconds to hours
+    const minutes = Math.floor((timeStr % 3600) / 60); // Remaining minutes
+  
+    return `${hours}h ${minutes}m`; // Properly formatted time
   };
+  
 
   return (
     <div className="modal-overlay" onClick={onClose}>
