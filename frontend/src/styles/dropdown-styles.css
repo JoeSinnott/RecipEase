@@ -1,109 +1,245 @@
-/* Add these styles to your RecipesPage.css file */
-
-.filter-container {
+.filter-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin: 15px 0;
+  gap: 1rem;
+  background: white;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  margin: 1.5rem 0;
   align-items: center;
-  position: relative;
 }
 
-
-.filter-dropdown-wrapper {
-  min-width: 150px;
-}
-
-.filter-dropdown-btn {
-  background-color: #e2e8f0; /* Darker background */
-  border: 1px solid #cbd5e1;
-  border-radius: 4px;
-  padding: 8px 15px;
-  cursor: pointer;
-  font-size: 15px; /* Slightly larger font */
-  font-weight: 500; /* Make text semi-bold */
+.filter-group {
   display: flex;
   align-items: center;
-  gap: 5px;
-  color: #1e293b; /* Darker text color */
-  transition: all 0.2s ease;
+  gap: 0.8rem;
 }
-.filter-dropdown-btn:hover {
-  background-color: #e9ecef;
+
+.filter-divider {
+  height: 30px;
+  width: 1px;
+  background-color: #e0e0e0;
+  margin: 0 0.5rem;
+}
+.filter-dropdown-btn {
+  background: #f5f7fa;
+  border: 1px solid #e0e0e0;
+  padding: 0.7rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #2c3e50;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .filter-dropdown-btn.active {
-  background-color: #dbeafe; /* Lighter blue background */
-  border-color: #3b82f6; /* Stronger blue border */
-  color: #1e40af; /* Darker blue text */
-  font-weight: 600; /* Make active text bold */
+  background: #ebf3fe;
+  border-color: #4a90e2;
+  color: #4a90e2;
 }
 
 .filter-dropdown-content {
   position: absolute;
-  top: 100%;
-  left: 0;
-  background-color: white;
-  min-width: 200px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
   z-index: 10;
-  border-radius: 4px;
-  margin-top: 5px;
-  max-height: 300px;
-  overflow-y: auto;
+  min-width: 220px;
+  margin-top: 0.5rem;
+  overflow: hidden;
+  animation: dropdownFadeIn 0.2s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .filter-option {
-  padding: 10px 15px;
+  padding: 0.8rem 1.2rem;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background 0.2s;
 }
 
 .filter-option:hover {
-  background-color: #f1f1f1;
+  background: #f5f7fa;
 }
 
 .filter-option.selected {
-  background-color: #e3f2fd;
-  color: #1976d2;
-  font-weight: 500;
+  background: #ebf3fe;
+  color: #4a90e2;
+  font-weight: 600;
+}
+.dietary-filters {
+  display: flex;
+  gap: 1.2rem;
 }
 
-.reset-filters-btn {
-  background-color: #fee2e2; /* Lighter red background */
-  color: #b91c1c; /* Darker red text */
-  border: 1px solid #fca5a5;
-  border-radius: 4px;
-  padding: 8px 15px;
+.dietary-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   cursor: pointer;
-  font-size: 15px;
-  font-weight: 500; /* Make text semi-bold */
-  transition: all 0.2s ease;
-}
-.reset-filters-btn:hover {
-  background-color: #f5c6cb;
+  user-select: none;
+  font-weight: 500;
+  color: #555;
+  transition: color 0.2s;
 }
 
-/* Make the filter section responsive */
+.dietary-option input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.dietary-option input:checked {
+  background-color: #4a90e2;
+  border-color: #4a90e2;
+}
+
+.dietary-option input:checked::after {
+  content: "✓";
+  color: white;
+  font-size: 14px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.dietary-option.active {
+  color: #4a90e2;
+}
+.exclude-toggle {
+  background: none;
+  border: none;
+  color: #4a90e2;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  transition: all 0.2s;
+  margin-bottom: 1rem;
+  display: flex;
+  align-content: center;
+  text-align: center;
+  gap: 0.5rem;
+  display: flex;
+  justify-content: center; /* Add this to center the content horizontally */
+  align-items: center; /* Change from align-content to align-items */
+  text-align: center;
+}
+
+.exclude-toggle::before {
+  content: "+";
+  font-size: 1.1rem;
+}
+
+.exclude-toggle.active {
+  background: #ebf3fe;
+  text-align: center;
+}
+
+.exclude-toggle.active::before {
+  content: "-";
+}
+
+.exclude-section {
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 1.2rem;
+  margin-bottom: 1.5rem;
+  animation: slideDown 0.3s ease-out;
+}
+.exclude-toggle:hover {
+  background-color: #a7e8aa; /* Light green color */
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 300px;
+  }
+}
+.reset-filters-btn {
+  background: #f8f9fa;
+  border: 1px dashed #d1d5db;
+  color: #64748b;
+  padding: 0.6rem 1.2rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.reset-filters-btn:hover {
+  background: #ef4444;
+  color: white;
+  border-color: #ef4444;
+}
+
+.reset-filters-btn::before {
+  content: "×";
+  font-size: 1.2rem;
+}
+.ingredient-list {
+  background: #f9fafb;
+  border-radius: 10px;
+  padding: 1rem 1.5rem;
+}
+
+.ingredient {
+  background: white;
+  border: 1px solid #e5e7eb;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.ingredient.excluded {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #b91c1c;
+}
 @media (max-width: 768px) {
-  .filter-container {
+  .filter-bar {
     flex-direction: column;
     align-items: stretch;
   }
   
-  .filter-dropdown-wrapper {
-    width: 100%;
+  .filter-group {
+    flex-wrap: wrap;
   }
   
-  .filter-dropdown-btn {
-    width: 100%;
-    justify-content: space-between;
+  .filter-divider {
+    display: none;
   }
   
-  .filter-dropdown-content {
-    width: 100%;
+  .dietary-filters {
+    margin-top: 1rem;
   }
-}
-.reset-button-container {
-  margin-left: auto; /* Push to the right */
 }

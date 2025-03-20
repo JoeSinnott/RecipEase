@@ -4,6 +4,7 @@ import L from "leaflet";
 import RecipeCard from "../components/RecipeCard";
 import "leaflet/dist/leaflet.css";
 import '../styles/RecipesPage.css';
+import '../styles/dropdown-styles.css';
 
 
 // ✅ Supermarket logos
