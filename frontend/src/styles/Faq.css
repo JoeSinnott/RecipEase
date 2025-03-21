@@ -1,0 +1,62 @@
+/* FAQ Page Styles */
+#faq {
+    padding: 50px 0;
+    background-color: #f8f8f8;
+  }
+  
+  .faq-heading {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .faq-item {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .faq-question {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .faq-answer {
+    font-size: 1.2rem;
+    color: #666;
+    margin-top: 10px;
+  }
+  
+  .faq-link {
+    display: inline-block;
+    margin-top: 30px;
+    font-size: 1.2rem;
+    color: #007BFF;
+    text-decoration: none;
+  }
+  
+  .faq-link:hover {
+    text-decoration: underline;
+  }
+
+
+  @media (max-width: 768px) {
+    .faq-heading {
+      font-size: 2rem;
+    }
+    .faq-item {
+      padding: 15px;
+    }
+    .faq-question {
+      font-size: 1.4rem;
+    }
+    .faq-answer {
+      font-size: 1rem;
+    }
+  }
+  
+  

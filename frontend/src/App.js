@@ -16,6 +16,7 @@ import "./styles.css";
 import { useTheme } from './ThemeContext';
 import UserHomePage from './pages/UserHomePage';
 import UserHeader from './components/UserHeader';
+import FAQPage from './pages/FAQPage';  // Import the FAQPage
 
 const PageTransitionWrapper = ({ children }) => {
   const location = useLocation();
@@ -76,6 +77,7 @@ const AppContent = () => {
             <Route path="/recipe/:id" element={<RecipeDetailPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/userhomepage" element={<UserHomePage />} />
+            <Route path="/faq" element={<FAQPage />} /> {/* Add this line for FAQ */}
           </Routes>
         </PageTransitionWrapper>
         <Footer />

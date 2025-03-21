@@ -58,7 +58,7 @@ const Features = () => {
         <p className="lead-description animate">
         Create and share your recipe<br/ >for the world to enjoy.
         </p>
-        <a href="/home" className="lead-btn animate">Create Now</a>
+        <a href="/create-recipe" className="lead-btn animate">Create Now</a>
 
         <h3 className="third-heading animate">
           The Recipease experience. <span className="extra-text animate">Do even more with our services.</span>
