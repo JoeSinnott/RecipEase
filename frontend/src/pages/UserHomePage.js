@@ -45,6 +45,12 @@ const UserHomePage = () => {
             <span className="icon">➕</span>
             <span>Create Recipe</span>
           </Link>
+          
+          <Link to="/faq" className="action-button">
+            <span className="icon">❓</span>
+            <span>FAQ</span>
+          </Link>
+          
         </div>
       </div>
       <Hero />

@@ -118,7 +118,7 @@ const Features = () => {
         <p className="story-description animate">
           Get to know the passionate<br/ >individuals behind our journey.
         </p>
-        <a href="/home" className="story-btn animate">Learn more</a>
+        <a href="/about-us" className="story-btn animate">Learn more</a>
 
 
         

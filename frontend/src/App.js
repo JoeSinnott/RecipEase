@@ -17,6 +17,8 @@ import { useTheme } from './ThemeContext';
 import UserHomePage from './pages/UserHomePage';
 import UserHeader from './components/UserHeader';
 import FAQPage from './pages/FAQPage';  // Import the FAQPage
+import AboutUsPage from './pages/AboutUsPage';  // Import the new About Us page
+
 
 const PageTransitionWrapper = ({ children }) => {
   const location = useLocation();
@@ -78,6 +80,7 @@ const AppContent = () => {
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/userhomepage" element={<UserHomePage />} />
             <Route path="/faq" element={<FAQPage />} /> {/* Add this line for FAQ */}
+            <Route path="/about-us" element={<AboutUsPage />} />
           </Routes>
         </PageTransitionWrapper>
         <Footer />

@@ -6,7 +6,10 @@ const FAQPage = () => {
   return (
     <section id="faq">
       <div className="container">
-        <h1 className="faq-heading">Frequently Asked Questions</h1>
+      <h2 class="faq-heading">
+        Feeling lost?
+        <span class="extra-text">Don't worry, we're here to help.</span>
+      </h2>
 
         <div className="faq-item">
           <h3>What is RecipEase?</h3>
