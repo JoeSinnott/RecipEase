@@ -52,6 +52,7 @@
   margin-top: 0.5rem;
   overflow: hidden;
   animation: dropdownFadeIn 0.2s ease-out;
+  color:#4a90e2; /* Dark gray text 
 }
 
 @keyframes dropdownFadeIn {

@@ -36,7 +36,7 @@ body.dark {
 
 .recipe-card {
   width: 300px; /* Consistent width */
-  min-height: 500px; /* Ensure all cards have the same height */
+  min-height: 600px; /* Ensure all cards have the same height */
   background-color: var(--card-bg);
   border-radius: 8px;
   box-shadow: 0px 4px 8px var(--card-shadow);
