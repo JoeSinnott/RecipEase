@@ -526,3 +526,92 @@
 }
 
 
+
+
+
+#faq {
+  padding: 50px 0;
+  background-color: #f8f8f8;
+}
+
+.container {
+  margin: 0;  /* Reset any margin */
+  padding: 0; /* Reset any padding */
+}
+
+.faq-heading {
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.faq-item {
+  margin: 20px 0;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column; /* Align question and answer vertically */
+  align-items: flex-start; /* Align them at the start */
+}
+
+.faq-item h3 {
+  margin: 0;  /* Remove default margin */
+  padding: 0; /* Remove padding */
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.faq-question {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px; /* Adds space below the question */
+  min-height: 50px; /* Ensures the question takes up a minimum height */
+  display: flex; /* Flex display helps ensure question and answer align properly */
+  align-items: center; /* Vertically centers the text in case of differing text lengths */
+}
+
+.faq-answer {
+  font-size: 1.2rem;
+  color: #666;
+  display: flex;
+  align-items: center; /* Vertically center the answer text */
+  min-height: 50px; /* Ensures the answer takes up a minimum height */
+}
+
+.faq-link {
+  display: inline-block;
+  margin-top: 30px;
+  font-size: 1.2rem;
+  color: #007BFF;
+  text-decoration: none;
+}
+
+.faq-link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .faq-heading {
+    font-size: 2rem;
+  }
+
+  .faq-item {
+    padding: 15px;
+  }
+
+  .faq-question {
+    font-size: 1.4rem;
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  .faq-answer {
+    font-size: 1rem;
+    margin-top: 5px;
+  }
+}
