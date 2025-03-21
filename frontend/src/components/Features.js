@@ -1,4 +1,6 @@
 import React, { useEffect } from 'react';
+import { Link } from "react-router-dom";
+
 
 const Features = () => {
   useEffect(() => {
@@ -10,7 +12,7 @@ const Features = () => {
           }
         });
       },
-      { threshold: 0.015 } // Triggers when 1.5% of the element is visible
+      { threshold: 0.01 } // Triggers when 1% of the element is visible
     );
 
     const elements = document.querySelectorAll(".animate");
@@ -62,6 +64,7 @@ const Features = () => {
           The Recipease experience. <span className="extra-text animate">Do even more with our services.</span>
         </h3>
 
+
         <div className="service-cards-container">
           <div className="service-card">
             <h4>Meal Prep</h4>
@@ -91,13 +94,17 @@ const Features = () => {
             <h4>Allergen-Free Options</h4>
             <p>Filter meals based on your dietary restrictions.</p>
           </div>
-          {/* Add more cards as needed */}
+          {/* Add as many more cards as needed */}
         </div>
 
 
-        <h3 className="choose-us-heading animate">
-          Get started. <span className="extra-text animate">Experience the difference today.</span>
-        </h3>
+        <h1 className="get-started-heading animate">
+          Get started.
+          <Link to="/recipes" className="extra-text animate"><br/>
+            Experience the difference today.
+          </Link>
+        </h1>
+
 
 
         <h1 className="fourth-heading animate">
