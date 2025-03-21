@@ -211,7 +211,7 @@ body.dark #features .fifth-heading {
     max-width: 300px; /* Max width for cards */
     flex-grow: 1; /* Allow cards to grow to fit available space */
     transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add smooth transition */
-    height: 125px;    
+    height: auto;    
 
 }
 

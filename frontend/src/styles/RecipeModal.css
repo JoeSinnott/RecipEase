@@ -1,10 +1,40 @@
+/* Variables for light/dark mode */
+:root {
+  --modal-bg: white;
+  --modal-text: #333;
+  --modal-secondary-text: #666;
+  --modal-border: #eee;
+  --modal-section-bg: #f8f9fa;
+  --modal-heading: #2c3e50;
+  --modal-overlay: rgba(0, 0, 0, 0.5);
+  --modal-close-bg: rgba(0, 0, 0, 0.2);
+  --modal-close-hover: rgba(0, 0, 0, 0.4);
+  --modal-favorite-bg: rgba(255, 255, 255, 0.8);
+  --modal-shadow: rgba(0, 0, 0, 0.2);
+}
+
+/* Dark mode variables */
+body.dark {
+  --modal-bg: #1a1a1a;
+  --modal-text: #f1f1f1;
+  --modal-secondary-text: #b0b0b0;
+  --modal-border: #333;
+  --modal-section-bg: #2a2a2a;
+  --modal-heading: #e1e1e1;
+  --modal-overlay: rgba(0, 0, 0, 0.7);
+  --modal-close-bg: rgba(255, 255, 255, 0.2);
+  --modal-close-hover: rgba(255, 255, 255, 0.4);
+  --modal-favorite-bg: rgba(40, 40, 40, 0.8);
+  --modal-shadow: rgba(0, 0, 0, 0.4);
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--modal-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -13,7 +43,7 @@
 }
 
 .recipe-modal {
-  background-color: white;
+  background-color: var(--modal-bg);
   border-radius: 16px;
   width: 90%;
   max-width: 1000px;
@@ -23,8 +53,9 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 30px var(--modal-shadow);
   animation: modalFadeIn 0.3s ease;
+  color: var(--modal-text);
 }
 
 @keyframes modalFadeIn {
@@ -42,7 +73,7 @@
   position: absolute;
   top: 1rem;
   right: 1rem;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--modal-close-bg);
   border: none;
   width: 32px;
   height: 32px;
@@ -58,14 +89,14 @@
 }
 
 .close-button:hover {
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--modal-close-hover);
 }
 
 .recipe-modal .favorite-btn {
   position: absolute;
   top: 1rem;
   left: 1rem;
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--modal-favorite-bg);
   border: none;
   width: 32px;
   height: 32px;
@@ -76,13 +107,19 @@
   font-size: 1.2rem;
   cursor: pointer;
   z-index: 10;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px var(--modal-shadow);
   transition: all 0.2s ease;
 }
 
 .recipe-modal .favorite-btn:hover {
   transform: scale(1.1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px var(--modal-shadow);
+}
+
+@keyframes heartBeat {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
 }
 
 .recipe-modal .favorite-btn.favorited {
@@ -99,18 +136,18 @@
 .modal-header {
   padding: 1.5rem;
   text-align: center;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--modal-border);
 }
 
 .modal-header h2 {
   margin: 0;
   font-size: 1.8rem;
-  color: #2c3e50;
+  color: var(--modal-heading);
 }
 
 .recipe-category {
   margin-top: 0.5rem;
-  color: #666;
+  color: var(--modal-secondary-text);
   font-style: italic;
 }
 
@@ -143,7 +180,7 @@
   display: flex;
   justify-content: space-around;
   padding: 1rem;
-  background-color: #f8f9fa;
+  background-color: var(--modal-section-bg);
   border-radius: 8px;
   margin-bottom: 1.5rem;
 }
@@ -168,7 +205,7 @@
 .ingredients-section h3, .instructions-section h3 {
   margin-top: 0;
   margin-bottom: 1rem;
-  color: #2c3e50;
+  color: var(--modal-heading);
   font-size: 1.4rem;
 }
 
@@ -180,7 +217,7 @@
 
 .ingredients-list li {
   padding: 0.5rem 0;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--modal-border);
 }
 
 .instructions-list {
