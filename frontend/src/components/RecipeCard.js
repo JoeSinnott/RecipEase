@@ -25,6 +25,12 @@ const RecipeCard = ({ recipe, onFavoriteToggle = null }) => {
   const images = recipe.Images || recipe.images || "/placeholder.jpg";
   const prepTime = formatTimeDisplay(recipe.PrepTime || recipe.prepTime);
   const cookTime = formatTimeDisplay(recipe.CookTime || recipe.cookTime);
+  
+  // Normalize nutrition data
+  const calories = recipe.Calories || recipe.calories || "N/A";
+  const protein = recipe.ProteinContent || recipe.protein || "N/A";
+  const carbs = recipe.CarbohydrateContent || recipe.carbs || "N/A";
+  const fat = recipe.FatContent || recipe.fat || "N/A";
 
   const [isFavorited, setIsFavorited] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -121,6 +127,12 @@ const RecipeCard = ({ recipe, onFavoriteToggle = null }) => {
           <p><strong>Category:</strong> {category || "N/A"}</p>
           <p><strong>Prep Time:</strong> {prepTime || "N/A"}</p>
           {cookTime && <p><strong>Cook Time:</strong> {cookTime}</p>}
+          {calories && calories !== "N/A" && (
+            <p><strong>🔥 Calories:</strong> {calories}</p>
+          )}
+          {protein && protein !== "N/A" && (
+            <p><strong>💪 Protein:</strong> {protein}g</p>
+          )}
         </div>
         <p className="view-details">Click for details</p>
         <button

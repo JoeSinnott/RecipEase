@@ -53,6 +53,14 @@ const RecipesPage = () => {
   const [isDairyFree, setIsDairyFree] = useState(false); // ✅ Dairy-free filter
   const [activeFilterDropdown, setActiveFilterDropdown] = useState(null);
   const [showExcludeSection, setShowExcludeSection] = useState(false); // ✅ Toggle exclude section
+  
+  // Nutrition filter states
+  const [minCalories, setMinCalories] = useState("");
+  const [maxCalories, setMaxCalories] = useState("");
+  const [minProtein, setMinProtein] = useState("");
+  const [maxProtein, setMaxProtein] = useState("");
+  const [minCarbs, setMinCarbs] = useState("");
+  const [maxCarbs, setMaxCarbs] = useState("");
 
   const manchesterCenter = [53.483959, -2.244644];
 
@@ -86,7 +94,13 @@ fetch("http://127.0.0.1:8000/recipes/recommend", {
     dairy_free: isDairyFree,
     max_cooking_time: maxCookingTime,  // This will be in minutes
     page: currentPage,
-    per_page: recipesPerPage
+    per_page: recipesPerPage,
+    min_calories: minCalories ? parseFloat(minCalories) : null,
+    max_calories: maxCalories ? parseFloat(maxCalories) : null,
+    min_protein: minProtein ? parseFloat(minProtein) : null,
+    max_protein: maxProtein ? parseFloat(maxProtein) : null,
+    min_carbs: minCarbs ? parseFloat(minCarbs) : null,
+    max_carbs: maxCarbs ? parseFloat(maxCarbs) : null
   }),
   mode: "cors",
 })
@@ -105,6 +119,11 @@ fetch("http://127.0.0.1:8000/recipes/recommend", {
           ingredients: recipe.Ingredients || recipe.ingredients,
           instructions: recipe.RecipeInstructions || recipe.instructions,
           calories: recipe.Calories || recipe.calories,
+          protein: recipe.ProteinContent || recipe.protein,
+          carbs: recipe.CarbohydrateContent || recipe.carbs,
+          fat: recipe.FatContent || recipe.fat,
+          fiber: recipe.FiberContent || recipe.fiber,
+          sugar: recipe.SugarContent || recipe.sugar,
           rating: recipe.AggregatedRating || recipe.rating
         }));
         setRecipes(normalizedRecipes);
@@ -115,7 +134,7 @@ fetch("http://127.0.0.1:8000/recipes/recommend", {
         setError("Failed to fetch recipes. Please try again.");
       })
       .finally(() => setLoading(false));
-  }, [ingredients, excludedIngredients, currentPage, cookingTimeFilter, customCookingTime, isVeganOnly, isDairyFree]);
+  }, [ingredients, excludedIngredients, currentPage, cookingTimeFilter, customCookingTime, isVeganOnly, isDairyFree, minCalories, maxCalories, minProtein, maxProtein, minCarbs, maxCarbs]);
 
   // ✅ Fetch supermarkets and only show ones in `logoUrls`
   useEffect(() => {
@@ -246,6 +265,24 @@ fetch("http://127.0.0.1:8000/recipes/recommend", {
     setExcludeSearch("");
     setShowExcludeSection(false);
     setActiveFilterDropdown(null);
+    setMinCalories("");
+    setMaxCalories("");
+    setMinProtein("");
+    setMaxProtein("");
+    setMinCarbs("");
+    setMaxCarbs("");
+    setCurrentPage(1);
+  };
+
+  const handleNutritionInputChange = (e, setter) => {
+    // Only allow positive numbers
+    const value = e.target.value.replace(/[^0-9.]/g, "");
+    setter(value);
+    setCurrentPage(1);
+  };
+
+  const handleNutritionFilterApply = () => {
+    setActiveFilterDropdown(null);
     setCurrentPage(1);
   };
 
@@ -293,6 +330,9 @@ fetch("http://127.0.0.1:8000/recipes/recommend", {
     if (isDairyFree) count++;
     if (sortOrder !== "default") count++;
     if (excludedIngredients.length > 0) count++;
+    if (minCalories || maxCalories) count++;
+    if (minProtein || maxProtein) count++;
+    if (minCarbs || maxCarbs) count++;
     return count;
   };
 
@@ -382,6 +422,102 @@ fetch("http://127.0.0.1:8000/recipes/recommend", {
                     <button onClick={handleCustomCookingTimeSubmit}>Apply</button>
                   </div>
                 )}
+              </div>
+            )}
+          </div>
+
+          {/* Calories Filter */}
+          <div className="filter-dropdown-wrapper">
+            <button
+              className={`filter-dropdown-btn ${minCalories || maxCalories ? 'active' : ''}`}
+              onClick={() => handleFilterToggle('calories')}
+            >
+              Calories {minCalories || maxCalories ? '✓' : '▼'}
+            </button>
+            {activeFilterDropdown === 'calories' && (
+              <div className="filter-dropdown-content">
+                <div className="range-filter">
+                  <div className="range-inputs">
+                    <input
+                      type="text"
+                      placeholder="Min calories"
+                      value={minCalories}
+                      onChange={(e) => handleNutritionInputChange(e, setMinCalories)}
+                    />
+                    <span>to</span>
+                    <input
+                      type="text"
+                      placeholder="Max calories"
+                      value={maxCalories}
+                      onChange={(e) => handleNutritionInputChange(e, setMaxCalories)}
+                    />
+                  </div>
+                  <button onClick={handleNutritionFilterApply}>Apply</button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Protein Filter */}
+          <div className="filter-dropdown-wrapper">
+            <button
+              className={`filter-dropdown-btn ${minProtein || maxProtein ? 'active' : ''}`}
+              onClick={() => handleFilterToggle('protein')}
+            >
+              Protein {minProtein || maxProtein ? '✓' : '▼'}
+            </button>
+            {activeFilterDropdown === 'protein' && (
+              <div className="filter-dropdown-content">
+                <div className="range-filter">
+                  <div className="range-inputs">
+                    <input
+                      type="text"
+                      placeholder="Min protein (g)"
+                      value={minProtein}
+                      onChange={(e) => handleNutritionInputChange(e, setMinProtein)}
+                    />
+                    <span>to</span>
+                    <input
+                      type="text"
+                      placeholder="Max protein (g)"
+                      value={maxProtein}
+                      onChange={(e) => handleNutritionInputChange(e, setMaxProtein)}
+                    />
+                  </div>
+                  <button onClick={handleNutritionFilterApply}>Apply</button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Carbs Filter */}
+          <div className="filter-dropdown-wrapper">
+            <button
+              className={`filter-dropdown-btn ${minCarbs || maxCarbs ? 'active' : ''}`}
+              onClick={() => handleFilterToggle('carbs')}
+            >
+              Carbs {minCarbs || maxCarbs ? '✓' : '▼'}
+            </button>
+            {activeFilterDropdown === 'carbs' && (
+              <div className="filter-dropdown-content">
+                <div className="range-filter">
+                  <div className="range-inputs">
+                    <input
+                      type="text"
+                      placeholder="Min carbs (g)"
+                      value={minCarbs}
+                      onChange={(e) => handleNutritionInputChange(e, setMinCarbs)}
+                    />
+                    <span>to</span>
+                    <input
+                      type="text"
+                      placeholder="Max carbs (g)"
+                      value={maxCarbs}
+                      onChange={(e) => handleNutritionInputChange(e, setMaxCarbs)}
+                    />
+                  </div>
+                  <button onClick={handleNutritionFilterApply}>Apply</button>
+                </div>
               </div>
             )}
           </div>

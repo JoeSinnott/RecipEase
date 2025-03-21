@@ -75,6 +75,14 @@ const RecipeModal = ({ recipe, onClose, onFavoriteToggle = null }) => {
 
   const ingredients = parseIngredients(recipe.ingredients); // ✅ Fixed field name
   const instructions = recipe.instructions || ["No instructions available."]; // ✅ Fixed field name
+  
+  // Normalize nutritional data
+  const calories = recipe.Calories || recipe.calories || "N/A";
+  const protein = recipe.ProteinContent || recipe.protein || "N/A";
+  const carbs = recipe.CarbohydrateContent || recipe.carbs || "N/A";
+  const fat = recipe.FatContent || recipe.fat || "N/A";
+  const fiber = recipe.FiberContent || recipe.fiber || "N/A";
+  const sugar = recipe.SugarContent || recipe.sugar || "N/A";
 
   // Prevent clicks within the modal from closing it
   const handleModalClick = (e) => {
@@ -134,6 +142,43 @@ const RecipeModal = ({ recipe, onClose, onFavoriteToggle = null }) => {
                 </div>
                 <div className="timing-item">
                   <strong>Total Time:</strong> {formatTimeDisplay(recipe.totalTime || recipe.TotalTime)}
+                </div>
+              </div>
+              
+              {/* Nutritional Information */}
+              <div className="nutritional-info">
+                <h3>Nutrition Facts</h3>
+                <div className="nutrition-grid">
+                  {calories && calories !== "N/A" && (
+                    <div className="nutrition-item">
+                      <strong>🔥 Calories:</strong> {calories}
+                    </div>
+                  )}
+                  {protein && protein !== "N/A" && (
+                    <div className="nutrition-item">
+                      <strong>💪 Protein:</strong> {protein}g
+                    </div>
+                  )}
+                  {carbs && carbs !== "N/A" && (
+                    <div className="nutrition-item">
+                      <strong>🍚 Carbs:</strong> {carbs}g
+                    </div>
+                  )}
+                  {fat && fat !== "N/A" && (
+                    <div className="nutrition-item">
+                      <strong>🧈 Fat:</strong> {fat}g
+                    </div>
+                  )}
+                  {fiber && fiber !== "N/A" && (
+                    <div className="nutrition-item">
+                      <strong>🌱 Fiber:</strong> {fiber}g
+                    </div>
+                  )}
+                  {sugar && sugar !== "N/A" && (
+                    <div className="nutrition-item">
+                      <strong>🍯 Sugar:</strong> {sugar}g
+                    </div>
+                  )}
                 </div>
               </div>
               

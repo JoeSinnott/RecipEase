@@ -99,7 +99,13 @@ class AdvancedRecipeRequest(BaseModel):
     dairy_free: bool = False
     page: int = 1
     per_page: int = 12
-    max_cooking_time: Optional[int] = None  # Add this line here
+    max_cooking_time: Optional[int] = None
+    min_calories: Optional[float] = None
+    max_calories: Optional[float] = None
+    min_protein: Optional[float] = None
+    max_protein: Optional[float] = None
+    min_carbs: Optional[float] = None
+    max_carbs: Optional[float] = None
 
 
 # Helper functions from recommendation algorithm
@@ -205,6 +211,11 @@ def suggest_recipes(request: RecipeRequest):
                 "calories": recipe.pop("Calories", "N/A"),
                 "images": recipe.pop("Images", "/placeholder.jpg"),
                 "ingredients": recipe.pop("Ingredients", "No ingredients listed"),
+                "protein": recipe.pop("ProteinContent", "N/A"),
+                "carbs": recipe.pop("CarbohydrateContent", "N/A"),
+                "fat": recipe.pop("FatContent", "N/A"),
+                "fiber": recipe.pop("FiberContent", "N/A"),
+                "sugar": recipe.pop("SugarContent", "N/A"),
             }
 
             if recipe.get("RecipeInstructions"):
@@ -293,6 +304,26 @@ def recommend_recipes(request: AdvancedRecipeRequest):
             # Convert minutes to seconds (multiply by 60)
             max_seconds = request.max_cooking_time * 60
             filter_condition += f" AND (r.TotalTime <= '{max_seconds}' OR r.CookTime <= '{max_seconds}') "
+            
+        # Add nutritional filters
+        if request.min_calories is not None:
+            filter_condition += f" AND r.Calories >= {request.min_calories} "
+            
+        if request.max_calories is not None:
+            filter_condition += f" AND r.Calories <= {request.max_calories} "
+            
+        if request.min_protein is not None:
+            filter_condition += f" AND r.ProteinContent >= {request.min_protein} "
+            
+        if request.max_protein is not None:
+            filter_condition += f" AND r.ProteinContent <= {request.max_protein} "
+            
+        if request.min_carbs is not None:
+            filter_condition += f" AND r.CarbohydrateContent >= {request.min_carbs} "
+            
+        if request.max_carbs is not None:
+            filter_condition += f" AND r.CarbohydrateContent <= {request.max_carbs} "
+            
         # First, get total count of matching recipes
         count_query = f"""
             SELECT COUNT(DISTINCT r.RecipeId) as total
@@ -313,7 +344,8 @@ def recommend_recipes(request: AdvancedRecipeRequest):
         query = f"""
             SELECT DISTINCT r.RecipeId, r.Name, r.RecipeInstructions, r.Ingredients,
                    r.CookTime, r.PrepTime, r.TotalTime, r.RecipeCategory,
-                   r.Images, r.AggregatedRating, r.Calories
+                   r.Images, r.AggregatedRating, r.Calories, r.ProteinContent,
+                   r.CarbohydrateContent, r.FatContent, r.FiberContent, r.SugarContent
             FROM recipes r
             JOIN recipe_ingredients ri ON r.RecipeId = ri.RecipeId
             JOIN ingredients i ON ri.IngredientId = i.IngredientId
@@ -345,6 +377,11 @@ def recommend_recipes(request: AdvancedRecipeRequest):
                 "calories": recipe.pop("Calories", "N/A"),
                 "images": recipe.pop("Images", "/placeholder.jpg"),
                 "ingredients": recipe.pop("Ingredients", "No ingredients listed"),
+                "protein": recipe.pop("ProteinContent", "N/A"),
+                "carbs": recipe.pop("CarbohydrateContent", "N/A"),
+                "fat": recipe.pop("FatContent", "N/A"),
+                "fiber": recipe.pop("FiberContent", "N/A"),
+                "sugar": recipe.pop("SugarContent", "N/A"),
             }
 
             # Fetch detailed ingredients for each recipe
