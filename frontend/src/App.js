@@ -11,6 +11,7 @@ import FavoritesPage from './pages/FavoritesPage';
 import CreateRecipePage from './pages/CreateRecipePage';
 import RecipeDetailPage from './pages/RecipeDetailPage';
 import SettingsPage from './pages/SettingsPage';
+import UserRecipesPage from './pages/UserRecipesPage';
 import "./styles.css";
 import { useTheme } from './ThemeContext';
 import UserHomePage from './pages/UserHomePage';
@@ -67,6 +68,7 @@ const AppContent = () => {
             <Route path="/" element={<HomePage />} />
             <Route path="/recipes" element={<RecipesPage />} />
             <Route path="/favorites" element={<FavoritesPage />} />
+            <Route path="/user-recipes" element={<UserRecipesPage />} />
             <Route path="/create-recipe" element={<CreateRecipePage/>} />
             <Route path="/signin" element={<SignIn setUser={setUser}/>} />
             <Route path="/signup" element={<SignUp />} />
