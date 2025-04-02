@@ -45,10 +45,10 @@ body.dark {
 .recipe-modal {
   background-color: var(--modal-bg);
   border-radius: 16px;
-  width: 90%;
-  max-width: 1000px;
-  height: 90vh;
-  max-height: 800px;
+  width: 95%;
+  max-width: 1200px;
+  height: 95vh;
+  max-height: 900px;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -131,6 +131,7 @@ body.dark {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  min-height: 100%;
 }
 
 .modal-header {
@@ -155,8 +156,7 @@ body.dark {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 0;
-  overflow: hidden;
+  min-height: calc(100vh - 150px);
 }
 
 .modal-image-container {
@@ -193,8 +193,8 @@ body.dark {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
-  height: calc(100% - 70px);
-  overflow: hidden;
+  flex: 1;
+  min-height: 400px;
 }
 
 .ingredients-section, .instructions-section {
